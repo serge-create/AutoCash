@@ -61,6 +61,7 @@
           <Property Name="MeasureUnitID" Type="int" Nullable="false" />
           <Property Name="VATRateID" Type="int" Nullable="false" />
           <Property Name="DiscountPercent" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="StockQuantity" Type="int" />
         </EntityType>
         <EntityType Name="Receipt_Items">
           <Key>
@@ -73,6 +74,7 @@
           <Property Name="Quantity" Type="decimal" Precision="8" Scale="3" Nullable="false" />
           <Property Name="Price" Type="decimal" Precision="10" Scale="2" Nullable="false" />
           <Property Name="SubTotal" Type="decimal" Precision="10" Scale="2" StoreGeneratedPattern="Computed" />
+          <Property Name="Mark" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Receipts">
           <Key>
@@ -483,6 +485,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           <Property Name="MeasureUnitID" Type="Int32" Nullable="false" />
           <Property Name="VATRateID" Type="Int32" Nullable="false" />
           <Property Name="DiscountPercent" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="StockQuantity" Type="Int32" />
           <NavigationProperty Name="MeasureUnits" Relationship="Self.FK_Products_MeasureUnits" FromRole="Products" ToRole="MeasureUnits" />
           <NavigationProperty Name="Product_Groups" Relationship="Self.FK_Products_Groups" FromRole="Products" ToRole="Product_Groups" />
           <NavigationProperty Name="Tax_Rates" Relationship="Self.FK_Products_VATRates" FromRole="Products" ToRole="Tax_Rates" />
@@ -499,6 +502,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           <Property Name="Quantity" Type="Decimal" Precision="8" Scale="3" Nullable="false" />
           <Property Name="Price" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
           <Property Name="SubTotal" Type="Decimal" Precision="10" Scale="2" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="Mark" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Products" Relationship="Self.FK_ReceiptItems_Products" FromRole="Receipt_Items" ToRole="Products" />
           <NavigationProperty Name="Receipts" Relationship="Self.FK_ReceiptItems_Receipts" FromRole="Receipt_Items" ToRole="Receipts" />
         </EntityType>
@@ -747,7 +751,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="AutoCashierDbEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="AutoCashierDbEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Customers" EntityType="Self.Customers" />
           <EntitySet Name="Employees" EntityType="Self.Employees" />
           <EntitySet Name="MeasureUnits" EntityType="Self.MeasureUnits" />
@@ -862,7 +866,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="Хранилище AutoCashierDbModelContainer" CdmEntityContainer="AutoCashierDbEntities">
+        <EntityContainerMapping StorageEntityContainer="Хранилище AutoCashierDbModelContainer" CdmEntityContainer="AutoCashierDbEntities1">
           <EntitySetMapping Name="Customers">
             <EntityTypeMapping TypeName="AutoCashierDbModel.Customers">
               <MappingFragment StoreEntitySet="Customers">
@@ -923,6 +927,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
                 <ScalarProperty Name="MeasureUnitID" ColumnName="MeasureUnitID" />
                 <ScalarProperty Name="VATRateID" ColumnName="VATRateID" />
                 <ScalarProperty Name="DiscountPercent" ColumnName="DiscountPercent" />
+                <ScalarProperty Name="StockQuantity" ColumnName="StockQuantity" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -935,6 +940,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

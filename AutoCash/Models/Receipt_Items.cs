@@ -20,6 +20,7 @@ namespace AutoCash.Models
         public decimal Quantity { get; set; }
         public decimal Price { get; set; }
         public Nullable<decimal> SubTotal { get; set; }
+        public string Mark { get; set; }
     
         public virtual Products Products { get; set; }
         public virtual Receipts Receipts { get; set; }

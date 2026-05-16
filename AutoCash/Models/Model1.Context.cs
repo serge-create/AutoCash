@@ -16,10 +16,10 @@ namespace AutoCash.Models
     using System.Data.Objects.DataClasses;
     using System.Linq;
     
-    public partial class AutoCashierDbEntities : DbContext
+    public partial class AutoCashierDbEntities1 : DbContext
     {
-        public AutoCashierDbEntities()
-            : base("name=AutoCashierDbEntities")
+        public AutoCashierDbEntities1()
+            : base("name=AutoCashierDbEntities1")
         {
         }
     

@@ -47,7 +47,7 @@ namespace AutoCash.Views
             try
             {
                 // Открываем контекст, сгенерированный базой данных
-                using (var db = new Models.AutoCashierDbEntities())
+                using (var db = new Models.AutoCashierDbEntities1())
                 {
                     // Делаем запрос к таблице Employees.
                     // .Include(emp => emp.Roles) — автоматически подгружает данные из таблицы Roles 
