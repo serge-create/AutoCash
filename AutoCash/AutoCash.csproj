@@ -134,17 +134,26 @@
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Management\AddCategoryWindow.xaml.cs">
+      <DependentUpon>AddCategoryWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Management\EmployeeManagerWindow.xaml.cs">
       <DependentUpon>EmployeeManagerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Management\ProductManager.xaml.cs">
       <DependentUpon>ProductManager.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Management\ShiftHistoryWindow.xaml.cs">
+      <DependentUpon>ShiftHistoryWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Management\ShiftManagerWindow.xaml.cs">
       <DependentUpon>ShiftManagerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PaymentWindow.xaml.cs">
       <DependentUpon>PaymentWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProductSearchWindow.xaml.cs">
+      <DependentUpon>ProductSearchWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -167,6 +176,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Management\AddCategoryWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Management\EmployeeManagerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -175,11 +188,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Management\ShiftHistoryWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Management\ShiftManagerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PaymentWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ProductSearchWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

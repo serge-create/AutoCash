@@ -96,7 +96,23 @@
                         </Grid>
 
                         <TextBlock Text="Товарная группа" FontSize="12" Foreground="#475569" Margin="0,0,0,4"/>
-                        <ComboBox x:Name="cbCardGroup" Height="35" Margin="0,0,0,12" DisplayMemberPath="Name"/>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="45"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ComboBox x:Name="cbCardGroup" Grid.Column="0" Height="35" DisplayMemberPath="Name" SelectedValuePath="GroupID"/>
+
+                            <Button x:Name="btnAddGroup" Grid.Column="1" Content="+" Height="35" Margin="5,0,0,0" 
+            Background="#2563EB" Foreground="White" FontWeight="Bold" FontSize="16" Click="btnAddGroup_Click">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="4"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </Grid>
 
                         <TextBlock Text="Единица измерения" FontSize="12" Foreground="#475569" Margin="0,0,0,4"/>
                         <ComboBox x:Name="cbCardUnit" Height="35" Margin="0,0,0,12" DisplayMemberPath="Name"/>

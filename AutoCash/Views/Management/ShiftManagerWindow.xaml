@@ -1,12 +1,76 @@
 ﻿<Window x:Class="AutoCash.Views.Management.ShiftManagerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AutoCash.Views.Management"
-        mc:Ignorable="d"
-        Title="ShiftManagerWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="Управление кассовой сменой" Height="450" Width="600"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Background="#F1F5F9" Loaded="Window_Loaded">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border x:Name="borderStatus" Grid.Row="0" Background="#94A3B8" CornerRadius="8" Padding="15">
+            <TextBlock x:Name="txtStatus" Text="СТАТУС: НЕИЗВЕСТНО" Foreground="White" 
+                       FontSize="24" FontWeight="Black" HorizontalAlignment="Center"/>
+        </Border>
+
+        <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="20" Margin="0,20,0,20">
+            <StackPanel VerticalAlignment="Center">
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Кассир:" FontSize="16" Foreground="#64748B" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="txtCashierName" Grid.Column="1" Text="-" FontSize="18" Foreground="#1E293B" FontWeight="Bold"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Время открытия:" FontSize="16" Foreground="#64748B" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="txtOpenTime" Grid.Column="1" Text="-" FontSize="18" Foreground="#1E293B" FontWeight="Bold"/>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Выручка за смену:" FontSize="16" Foreground="#64748B" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="txtRevenue" Grid.Column="1" Text="0.00 ₽" FontSize="20" Foreground="#27AE60" FontWeight="Black"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="btnOpenShift" Grid.Column="0" Content="ОТКРЫТЬ СМЕНУ" Height="50" Margin="0,0,10,0"
+                    Background="#22C55E" Foreground="White" FontSize="16" FontWeight="Bold" BorderThickness="0" Click="btnOpenShift_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <Button x:Name="btnCloseShift" Grid.Column="1" Content="ЗАКРЫТЬ СМЕНУ (Z-Отчет)" Height="50" Margin="10,0,0,0"
+                    Background="#EF4444" Foreground="White" FontSize="16" FontWeight="Bold" BorderThickness="0" Click="btnCloseShift_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </Grid>
     </Grid>
 </Window>

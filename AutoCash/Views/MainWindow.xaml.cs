@@ -1,21 +1,31 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using AutoCash.Core;
+using AutoCash.Models;
 
 namespace AutoCash.Views
 {
     public partial class MainWindow : Window
     {
+        // Коллекция корзины покупок (автоматически обновляет UI интерфейс)
+        private ObservableCollection<CartItem> _cartItems = new ObservableCollection<CartItem>();
+
+        // Строковый буфер для сбора цифр со сканера штрихкодов
+        private string _barcodeBuffer = "";
+
+        // Текущая сумма чека
+        private decimal _currentTotal = 0;
+
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        // Событие срабатывает при загрузке окна
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // Проверка: если кто-то запустил окно в обход авторизации
             if (AppState.CurrentUser == null)
             {
                 MessageBox.Show("Ошибка авторизации. Выполните вход.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -23,59 +33,213 @@ namespace AutoCash.Views
                 return;
             }
 
-            // Выводим имя сотрудника и его роль на экран
             txtCurrentUser.Text = $"Кассир: {AppState.CurrentUser.FullName} | Роль: {AppState.CurrentUser.Roles?.RoleName ?? "Неизвестно"}";
 
-            // Применяем ролевую модель (RBAC)
+            // ПРИВЯЗКА КОРЗИНЫ К ТАБЛИЦЕ
+            dgReceipt.ItemsSource = _cartItems;
+
             ApplyPermissions();
         }
 
-        // Разграничение прав доступа
         private void ApplyPermissions()
         {
             string roleName = AppState.CurrentUser.Roles?.RoleName;
-
-            // Если это обычный кассир - скрываем все кнопки администрирования
             if (roleName == "Кассир")
             {
                 btnProducts.Visibility = Visibility.Collapsed;
                 btnEmployees.Visibility = Visibility.Collapsed;
                 btnShifts.Visibility = Visibility.Collapsed;
+                btnAnalytics.Visibility = Visibility.Collapsed;
             }
-            // Если это старший кассир - скрываем только персонал
             else if (roleName == "Старший кассир")
             {
                 btnEmployees.Visibility = Visibility.Collapsed;
-                // Управление товарами остается, но внутри самого ProductManagerWindow мы заблокируем добавление
             }
-            // Если Администратор - всё остается видимым по умолчанию
         }
 
-        // Обработка кнопки "Сменить пользователя"
-        private void btnLogout_Click(object sender, RoutedEventArgs e)
+        // ==========================================
+        // ЛОГИКА СКАНИРОВАНИЯ И ДОБАВЛЕНИЯ В ЧЕК
+        // ==========================================
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            Logout();
+            // Обработка горячих клавиш оплаты (F9 / F10)
+            // (Кнопкам оплаты мы дадим имена и события чуть позже, пока оставляем так)
+            if (e.Key == Key.F3) { btnSearchProduct_Click(null, null); return; }
+
+            // Логика сканера штрихкодов (Считывает Enter в конце)
+            if (e.Key == Key.Enter)
+            {
+                if (!string.IsNullOrEmpty(_barcodeBuffer))
+                {
+                    ProcessBarcode(_barcodeBuffer);
+                    _barcodeBuffer = ""; // Очищаем буфер после обработки
+                }
+            }
+            else
+            {
+                // Собираем цифры, если нажата клавиша с цифрой (основная или Numpad)
+                if (e.Key >= Key.D0 && e.Key <= Key.D9)
+                    _barcodeBuffer += (e.Key - Key.D0).ToString();
+                else if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9)
+                    _barcodeBuffer += (e.Key - Key.NumPad0).ToString();
+            }
         }
+
+        private void ProcessBarcode(string barcode)
+        {
+            // Защита: нельзя пробивать чек, если смена не открыта
+            if (AppState.CurrentShift == null)
+            {
+                MessageBox.Show("Смена не открыта! Перейдите в 'Кассовые смены' и откройте смену.", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                using (var db = new AutoCashierDbEntities1()) // Замени на свой Context
+                {
+                    // Ищем товар в БД
+                    var product = db.Products.FirstOrDefault(p => p.Barcode == barcode);
+
+                    if (product != null)
+                    {
+                        AddToCart(product);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Товар со штрихкодом {barcode} не найден в базе!", "Не найдено", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка БД: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void AddToCart(Products product)
+        {
+            // Проверяем, есть ли уже этот товар в корзине
+            // Если свойство ID товара в твоей БД называется иначе (например ProductID), замени здесь:
+            var existingItem = _cartItems.FirstOrDefault(c => c.ProductID == product.ProductID);
+
+            if (existingItem != null)
+            {
+                existingItem.Quantity++;
+                existingItem.Total = existingItem.Quantity * existingItem.Price;
+                dgReceipt.Items.Refresh(); // Принудительно обновляем UI таблицу
+            }
+            else
+            {
+                _cartItems.Add(new CartItem
+                {
+                    ProductID = product.ProductID,
+                    ProductName = product.Name,
+                    Quantity = 1,
+                    Price = product.Price,
+                    Discount = 0,
+                    Total = product.Price
+                });
+            }
+
+            UpdateTotal();
+        }
+
+        // Обновление итоговой суммы
+        private void UpdateTotal()
+        {
+            _currentTotal = _cartItems.Sum(c => c.Total);
+            txtTotalAmount.Text = $"{_currentTotal:F2} ₽";
+        }
+
+        // ==========================================
+        // БЫСТРЫЕ ДЕЙСТВИЯ (ПРАВАЯ ПАНЕЛЬ)
+        // ==========================================
+
+        private void btnStorno_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgReceipt.SelectedItem is CartItem selectedItem)
+            {
+                _cartItems.Remove(selectedItem);
+                UpdateTotal();
+            }
+            else
+            {
+                MessageBox.Show("Выберите строку в чеке для сторнирования (удаления).", "Подсказка", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void btnClearReceipt_Click(object sender, RoutedEventArgs e)
+        {
+            if (_cartItems.Count > 0)
+            {
+                var res = MessageBox.Show("Вы уверены, что хотите очистить весь чек?", "Очистка", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (res == MessageBoxResult.Yes)
+                {
+                    _cartItems.Clear();
+                    UpdateTotal();
+                }
+            }
+        }
+
+        private void btnSearchProduct_Click(object sender, RoutedEventArgs e)
+        {
+            // Защита: нельзя искать и пробивать, если смена закрыта
+            if (AppState.CurrentShift == null)
+            {
+                MessageBox.Show("Смена не открыта! Перейдите в 'Кассовые смены' и откройте смену.", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            ProductSearchWindow searchWindow = new ProductSearchWindow();
+            searchWindow.Owner = this;
+
+            // Открываем окно. Если кассир выбрал товар, DialogResult будет true
+            if (searchWindow.ShowDialog() == true)
+            {
+                if (searchWindow.SelectedProduct != null)
+                {
+                    // Используем уже готовый метод добавления в корзину!
+                    AddToCart(searchWindow.SelectedProduct);
+                }
+            }
+        }
+
+        // ==========================================
+        // НАВИГАЦИЯ И ВЫХОД
+        // ==========================================
+        private void btnLogout_Click(object sender, RoutedEventArgs e) => Logout();
 
         private void Logout()
         {
-            AppState.Logout(); // Очищаем сессию
+            AppState.Logout();
             LoginWindow loginWindow = new LoginWindow();
-            // Так как LoginWindow у нас Page, для него потребуется контейнер, либо можно сделать LoginWindow как Window.
-            // Если LoginWindow был создан как Window (исходя из логики десктопного приложения), вызываем:
-            // loginWindow.Show(); 
+            loginWindow.Show();
             this.Close();
         }
 
-        // Заглушки для переходов (создадим эти окна позже)
-        private void btnProducts_Click(object sender, RoutedEventArgs e) { MessageBox.Show("Модуль в разработке"); }
-        private void btnShifts_Click(object sender, RoutedEventArgs e) { MessageBox.Show("Модуль в разработке"); }
-        private void btnEmployees_Click(object sender, RoutedEventArgs e) { MessageBox.Show("Модуль в разработке"); }
+        // Заглушки других окон (админка)
+        private void btnProducts_Click(object sender, RoutedEventArgs e) { new Management.ProductManager().ShowDialog(); }
+        private void btnShifts_Click(object sender, RoutedEventArgs e) { new Management.ShiftManagerWindow().ShowDialog(); }
+        private void btnEmployees_Click(object sender, RoutedEventArgs e) { new Management.EmployeeManagerWindow().ShowDialog(); }
 
-        // Здесь будем перехватывать штрихкоды со сканера
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void btnAnalytics_Click(object sender, RoutedEventArgs e)
         {
-            // Место для Этапа 4: сканирование товара
+            Management.ShiftHistoryWindow historyWindow = new Management.ShiftHistoryWindow();
+            historyWindow.Owner = this;
+            historyWindow.ShowDialog();
         }
+    }
+
+    // Вспомогательный класс-модель (ViewModel) для отображения строк в DataGrid
+    public class CartItem
+    {
+        public int ProductID { get; set; }
+        public string ProductName { get; set; }
+        public decimal Quantity { get; set; }
+        public decimal Price { get; set; }
+        public decimal Discount { get; set; }
+        public decimal Total { get; set; }
     }
 }

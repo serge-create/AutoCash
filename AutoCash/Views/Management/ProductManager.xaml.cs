@@ -100,6 +100,7 @@ namespace AutoCash.Views.Management
             cbGroups.SelectedIndex = 0;
         }
 
+
         // Выбор товара в таблице -> Заполнение карточки справа
         private void dgProducts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -211,6 +212,36 @@ namespace AutoCash.Views.Management
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Невозможно удалить товар. Возможно, он уже фигурирует в пробитых чеках.\nДетали: {ex.Message}", "Ошибка удаления", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void btnAddGroup_Click(object sender, RoutedEventArgs e)
+        {
+            AddCategoryWindow addCatWindow = new AddCategoryWindow();
+            addCatWindow.Owner = this; // Вот так правильно задается владелец окна
+
+            if (addCatWindow.ShowDialog() == true)
+            {
+                // Если категория успешно добавлена, обновляем источники данных ComboBox
+                try
+                {
+                    using (var db = new AutoCashierDbEntities1())
+                    {
+                        var updatedGroups = db.Product_Groups.ToList();
+
+                        // 1. Обновляем выпадающий список в карточке редактирования товара
+                        cbCardGroup.ItemsSource = updatedGroups;
+
+                        // 2. Обновляем верхний фильтр категорий (сохраняя элемент "Все категории")
+                        var groupsForFilter = updatedGroups.ToList();
+                        groupsForFilter.Insert(0, new Product_Groups { GroupID = -1, Name = "Все категории" });
+                        cbGroups.ItemsSource = groupsForFilter;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка обновления списков: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

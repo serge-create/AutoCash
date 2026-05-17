@@ -1,0 +1,91 @@
+﻿<Window x:Class="AutoCash.Views.Management.ShiftHistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Архив кассовых смен и аналитика" Height="600" Width="900"
+        WindowStartupLocation="CenterOwner" Background="#F1F5F9" Loaded="Window_Loaded">
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="80"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="White" CornerRadius="6" Padding="15,10" Margin="0,0,0,15">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
+                <StackPanel Margin="0,0,15,0">
+                    <TextBlock Text="Дата начала периода" FontSize="11" Foreground="#64748B" Margin="0,0,0,4"/>
+                    <DatePicker x:Name="dpStart" Width="150" Height="32"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,0,20,0">
+                    <TextBlock Text="Дата окончания" FontSize="11" Foreground="#64748B" Margin="0,0,0,4"/>
+                    <DatePicker x:Name="dpEnd" Width="150" Height="32"/>
+                </StackPanel>
+
+                <Button x:Name="btnApplyFilter" Content="Сформировать отчет" Width="160" Height="32" 
+                        VerticalAlignment="Bottom" Background="#2563EB" Foreground="White" FontWeight="Bold" 
+                        BorderThickness="0" Click="btnApplyFilter_Click">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="4"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button x:Name="btnResetFilter" Content="Сбросить" Width="90" Height="32" Margin="10,0,0,0"
+                        VerticalAlignment="Bottom" Background="#94A3B8" Foreground="White" 
+                        BorderThickness="0" Click="btnResetFilter_Click">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="4"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Background="White" CornerRadius="6" Padding="10">
+            <DataGrid x:Name="dgShifts" AutoGenerateColumns="False" IsReadOnly="True" 
+                      HeadersVisibility="Column" FontSize="14" RowHeight="35"
+                      Background="White" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="№ Смены" Binding="{Binding ShiftID}" Width="80"/>
+                    <DataGridTextColumn Header="ФИО Кассира" Binding="{Binding CashierName}" Width="*"/>
+                    <DataGridTextColumn Header="Время открытия" Binding="{Binding OpenedAt, StringFormat={}{0:dd.MM.yyyy HH:mm}}" Width="150"/>
+                    <DataGridTextColumn Header="Время закрытия" Binding="{Binding ClosedAt, StringFormat={}{0:dd.MM.yyyy HH:mm}}" Width="150"/>
+                    <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="100"/>
+                    <DataGridTextColumn Header="Выручка" Binding="{Binding TotalRevenue, StringFormat={}{0:F2} ₽}" Width="130">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Margin" Value="0,0,10,0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <Border Grid.Row="2" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0" Margin="0,15,0,0" CornerRadius="6" Padding="20,0">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="Всего смен за период: " FontSize="16" Foreground="#64748B"/>
+                    <TextBlock x:Name="txtTotalShifts" Text="0" FontSize="16" FontWeight="Bold" Foreground="#1E293B"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="ОБЩАЯ ВЫРУЧКА: " FontSize="18" FontWeight="Bold" Foreground="#1E293B" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txtGrandTotalRevenue" Text="0.00 ₽" FontSize="24" FontWeight="Black" Foreground="#16A34A" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

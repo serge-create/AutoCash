@@ -22,6 +22,7 @@
                 <StackPanel x:Name="spAdminMenu" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button x:Name="btnProducts" Content="Управление товарами" Width="150" Margin="5" Click="btnProducts_Click"/>
                     <Button x:Name="btnShifts" Content="Кассовые смены" Width="120" Margin="5" Click="btnShifts_Click"/>
+                    <Button x:Name="btnAnalytics" Content="Аналитика смен" Width="120" Margin="5" Background="#16A34A" Foreground="White" BorderThickness="0" Click="btnAnalytics_Click"/>
                     <Button x:Name="btnEmployees" Content="Персонал" Width="100" Margin="5" Click="btnEmployees_Click"/>
                     <Button x:Name="btnLogout" Content="Сменить пользователя" Width="150" Margin="5" Background="#E74C3C" Foreground="White" BorderThickness="0" Click="btnLogout_Click"/>
                 </StackPanel>
@@ -47,9 +48,9 @@
             </Border>
 
             <StackPanel Grid.Column="1" Background="White" Margin="0" >
-                <Button Content="Поиск товара (F3)" Height="50" Margin="10" FontSize="16"/>
-                <Button Content="Сторно (Удалить строку)" Height="50" Margin="10" FontSize="16" Background="#F1C40F"/>
-                <Button Content="Очистить чек" Height="50" Margin="10" FontSize="16" Background="#E67E22" Foreground="White"/>
+                <Button x:Name="btnSearchProduct" Content="Поиск товара (F3)" Height="50" Margin="10" FontSize="16" Click="btnSearchProduct_Click"/>
+                <Button x:Name="btnStorno" Content="Сторно (Удалить строку)" Height="50" Margin="10" FontSize="16" Background="#F1C40F" Click="btnStorno_Click"/>
+                <Button x:Name="btnClearReceipt" Content="Очистить чек" Height="50" Margin="10" FontSize="16" Background="#E67E22" Foreground="White" Click="btnClearReceipt_Click"/>
             </StackPanel>
         </Grid>
 

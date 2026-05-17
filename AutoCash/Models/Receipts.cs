@@ -29,6 +29,7 @@ namespace AutoCash.Models
         public decimal ReceiptDiscount { get; set; }
         public System.DateTime CreatedAt { get; set; }
         public int StatusID { get; set; }
+        public Nullable<int> TotalAmount { get; set; }
     
         public virtual Customers Customers { get; set; }
         public virtual Employees Employees { get; set; }

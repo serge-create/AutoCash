@@ -1,86 +1,124 @@
-﻿using AutoCash.Core;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Data.Entity;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using AutoCash.Core;   // Подключаем наш AppState
-using AutoCash.Models; // Подключаем сгенерированные классы БД (EF Core)
+using AutoCash.Core;
+using AutoCash.Models; // Твои классы БД
 
 namespace AutoCash.Views
-
 {
-    /// <summary>
-    /// Логика взаимодействия для LoginWindow.xaml
-    /// </summary>
-    public partial class LoginWindow : Page
+    public partial class LoginWindow : Window
     {
-        
         public LoginWindow()
         {
             InitializeComponent();
-            txtLogin.Focus();
+            // Фокус сразу на поле пароля, чтобы кассир мог сразу вводить цифры/текст
+            txtPassword.Focus();
         }
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            string login = txtLogin.Text.Trim();
-            string password = txtPassword.Password;
+            PerformAuthentication();
+        }
 
-            if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
+        private void PerformAuthentication()
+        {
+            lblError.Visibility = Visibility.Collapsed;
+            string password = txtPassword.Password.Trim();
+
+            if (string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("Заполните поля 'Логин' и 'Пароль'!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowErrorMessage("Введите пароль!");
                 return;
             }
 
             try
             {
-                // Открываем контекст, сгенерированный базой данных
-                using (var db = new Models.AutoCashierDbEntities1())
+                using (var db = new AutoCashierDbEntities1()) // Проверь, что имя контекста верное
                 {
-                    // Делаем запрос к таблице Employees.
-                    // .Include(emp => emp.Roles) — автоматически подгружает данные из таблицы Roles 
-                    // на основе внешнего ключа (FK), который был настроен в SQL-скрипте.
+                    // ==========================================
+                    // РЕЖИМ ПЕРВИЧНОЙ ИНИЦИАЛИЗАЦИИ (БАЗА ПУСТА)
+                    // ==========================================
+                    if (!db.Employees.Any())
+                    {
+                        if (password == "123456789")
+                        {
+                            // Проверяем, существует ли роль "Администратор", если нет - создаем
+                            var adminRole = db.Roles.FirstOrDefault(r => r.RoleName == "Администратор");
+                            if (adminRole == null)
+                            {
+                                adminRole = new Roles { RoleName = "Администратор" };
+                                db.Roles.Add(adminRole);
+                                db.SaveChanges(); // Сохраняем, чтобы база присвоила роли ID
+                            }
+
+                            // Создаем дефолтного суперпользователя
+                            var defaultAdmin = new Employees
+                            {
+                                FullName = "Системный Администратор",
+                                PinCode = "123456789",
+                                RoleID = adminRole.RoleID // Убедись, что свойство ID роли называется именно так (RoleID или ID)
+                            };
+
+                            db.Employees.Add(defaultAdmin);
+                            db.SaveChanges();
+
+                            // Выводим строгое уведомление
+                            MessageBox.Show("Первичная инициализация прошла успешно.\nСоздан профиль Системного Администратора.\n\nВНИМАНИЕ: Обязательно перейдите в раздел 'Персонал' и измените этот стандартный ПИН-код (123456789) в целях безопасности!",
+                                            "Безопасность системы", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                        else
+                        {
+                            ShowErrorMessage("База пользователей пуста. Введите стандартный пароль для инициализации.");
+                            txtPassword.Clear();
+                            return;
+                        }
+                    }
+
+                    // ==========================================
+                    // СТАНДАРТНАЯ ЛОГИКА ВХОДА
+                    // ==========================================
                     var employee = db.Employees
-                                     .Include(emp => emp.Roles)
-                                     .FirstOrDefault(emp => emp.PinCode == login && emp.INN == password);
+                                     .Include(e => e.Roles) // Жадная загрузка роли
+                                     .FirstOrDefault(e => e.PinCode == password);
 
                     if (employee != null)
                     {
-                        // Авторизация успешна. Сохраняем объект сотрудника со всеми его авто-свойствами
+                        // Успешная авторизация
                         AppState.CurrentUser = employee;
 
-                        // Переходим в главное окно программы
                         MainWindow mainWindow = new MainWindow();
-                        Window currentWindow = Window.GetWindow(this);
-                        if (currentWindow != null)
-                        {
-                            currentWindow.Close();
-                        }
                         mainWindow.Show();
+                        this.Close();
                     }
                     else
                     {
-                        MessageBox.Show("Неверный логин или пароль сотрудника!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                        // Если пароль не найден в базе
+                        ShowErrorMessage("Сотрудник с таким паролем не найден!");
                         txtPassword.Clear();
+                        txtPassword.Focus();
                     }
                 }
             }
             catch (Exception ex)
             {
-                // На случай, если забыли запустить локальный SQL Server или строка подключения неверна
-                MessageBox.Show($"Ошибка доступа к SQL Server:\n{ex.Message}", "Системный сбой", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка подключения к базе данных:\n{ex.Message}",
+                                "Критический сбой", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private void ShowErrorMessage(string message)
+        {
+            lblError.Text = message;
+            lblError.Visibility = Visibility.Visible;
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Поддержка нажатия Enter для входа
+            if (e.Key == Key.Enter)
+            {
+                PerformAuthentication();
             }
         }
     }

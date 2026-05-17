@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Хранилище AutoCashierDbModel" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Хранилище AutoCashierDbModel" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Customers">
           <Key>
             <PropertyRef Name="CustomerID" />
@@ -90,6 +90,7 @@
           <Property Name="ReceiptDiscount" Type="decimal" Precision="10" Scale="2" Nullable="false" />
           <Property Name="CreatedAt" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="StatusID" Type="int" Nullable="false" />
+          <Property Name="TotalAmount" Type="int" />
         </EntityType>
         <EntityType Name="Roles">
           <Key>
@@ -417,8 +418,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
             <End Role="Shifts" EntitySet="Shifts" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="AutoCashierDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -527,6 +527,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           <NavigationProperty Name="Shifts" Relationship="Self.FK_Receipts_Shifts" FromRole="Receipts" ToRole="Shifts" />
           <NavigationProperty Name="Statuses" Relationship="Self.FK_Receipts_Statuses" FromRole="Receipts" ToRole="Statuses" />
           <NavigationProperty Name="Tax_Systems" Relationship="Self.FK_Receipts_TaxSystems" FromRole="Receipts" ToRole="Tax_Systems" />
+          <Property Name="TotalAmount" Type="Int32" />
         </EntityType>
         <EntityType Name="Roles">
           <Key>
@@ -947,6 +948,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           <EntitySetMapping Name="Receipts">
             <EntityTypeMapping TypeName="AutoCashierDbModel.Receipts">
               <MappingFragment StoreEntitySet="Receipts">
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
                 <ScalarProperty Name="ReceiptID" ColumnName="ReceiptID" />
                 <ScalarProperty Name="ShiftID" ColumnName="ShiftID" />
                 <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
