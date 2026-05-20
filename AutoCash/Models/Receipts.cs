@@ -22,14 +22,13 @@ namespace AutoCash.Models
         public int ReceiptID { get; set; }
         public int ShiftID { get; set; }
         public int EmployeeID { get; set; }
-        public int TaxSystemID { get; set; }
         public bool IsReturn { get; set; }
         public Nullable<int> CustomerID { get; set; }
         public int PaymentTypeID { get; set; }
         public decimal ReceiptDiscount { get; set; }
         public System.DateTime CreatedAt { get; set; }
         public int StatusID { get; set; }
-        public Nullable<int> TotalAmount { get; set; }
+        public Nullable<decimal> TotalAmount { get; set; }
     
         public virtual Customers Customers { get; set; }
         public virtual Employees Employees { get; set; }
@@ -37,6 +36,5 @@ namespace AutoCash.Models
         public virtual ICollection<Receipt_Items> Receipt_Items { get; set; }
         public virtual Shifts Shifts { get; set; }
         public virtual Statuses Statuses { get; set; }
-        public virtual Tax_Systems Tax_Systems { get; set; }
     }
 }

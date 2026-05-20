@@ -14,7 +14,6 @@ namespace AutoCash.Models
     
     public partial class Receipt_Items
     {
-        public int ItemID { get; set; }
         public int ReceiptID { get; set; }
         public int ProductID { get; set; }
         public decimal Quantity { get; set; }

@@ -254,24 +254,36 @@ namespace AutoCash.Views
 
         private void SaveReceiptToDatabase(string paymentMethod)
         {
+            MessageBox.Show(paymentMethod);
             try
             {
                 using (var db = new AutoCashierDbEntities1()) // Убедись, что имя контекста твоё
                 {
                     // Получаем ID типа оплаты из БД (например: 1 - Наличные, 2 - Карта)
-                    var paymentType = db.Payment_Types.FirstOrDefault(p => p.Name == paymentMethod);
-                    int paymentTypeId = paymentType != null ? paymentType.PaymentTypeID : 1;
+                    // Получаем ID типа оплаты из БД
+                    var paymentType = db.Payment_Types.Where(x => x.Name == paymentMethod).FirstOrDefault();
+                    
+                    // ДОБАВЛЕНА ЗАЩИТА:
+                    if (paymentType == null)
+                    {
+                        MessageBox.Show($"Критическая ошибка: Тип оплаты '{paymentMethod}' не найден в справочнике Payment_Types базы данных!\n\nПроверьте, что таблица заполнена и названия совпадают.",
+                                        "Ошибка настроек БД", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return; // Прерываем сохранение, чтобы программа не упала!
+                    }
 
+                    int paymentTypeId = paymentType.PaymentTypeID;
                     // СОЗДАЕМ ЗАГОЛОВОК ЧЕКА
                     var newReceipt = new Receipts
                     {
                         ShiftID = AppState.CurrentShift.ShiftID, // ID текущей смены
                         EmployeeID = AppState.CurrentUser.EmployeeID,    // Кто пробил
-                        CreatedAt = DateTime.Now,
                         IsReturn = false,
+                        CustomerID = null, // Пока не реализуем клиентов, оставляем null
                         PaymentTypeID = paymentTypeId,
-                        StatusID = 1, // 1 - Приход (продажа) по 54-ФЗ
                         ReceiptDiscount = 0, // Скидку на весь чек пока ставим 0
+                        CreatedAt = DateTime.Now,
+                        StatusID = 1, // 1 - Приход (продажа) по 54-ФЗ
+                        TotalAmount = _cartItems.Sum(c => c.Total)
                     };
 
                     db.Receipts.Add(newReceipt);
@@ -308,7 +320,7 @@ namespace AutoCash.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Критическая ошибка при сохранении чека в БД:\n{ex.Message}", "Ошибка СУБД", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.ToString());
             }
         }
         // Заглушки других окон (админка)

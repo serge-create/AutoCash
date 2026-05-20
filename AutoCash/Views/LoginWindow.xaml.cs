@@ -87,7 +87,18 @@ namespace AutoCash.Views
                     {
                         // Успешная авторизация
                         AppState.CurrentUser = employee;
+                        var openShift = db.Shifts.FirstOrDefault(s => s.ClosedAt == null);
 
+                        if (openShift != null)
+                        {
+                            // Смена найдена! Восстанавливаем её в глобальное состояние приложения
+                            AppState.CurrentShift = openShift;
+                        }
+                        else
+                        {
+                            // Нет открытых смен, кассиру нужно будет открыть её вручную
+                            AppState.CurrentShift = null;
+                        }
                         MainWindow mainWindow = new MainWindow();
                         mainWindow.Show();
                         this.Close();

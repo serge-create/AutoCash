@@ -4,22 +4,21 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="82e8cc403a304393b0fd87722c5c458b" Name="Diagram1">
-        <EntityTypeShape EntityType="AutoCashierDbModel.Customers" Width="1.5" PointX="5.25" PointY="2.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.Employees" Width="1.5" PointX="3" PointY="3.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.MeasureUnits" Width="1.5" PointX="5.25" PointY="17" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.Payment_Types" Width="1.5" PointX="5.25" PointY="5.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.Product_Groups" Width="1.5" PointX="5.25" PointY="19.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.Products" Width="1.5" PointX="7.5" PointY="18.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.Receipt_Items" Width="1.5" PointX="9.75" PointY="5.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.Receipts" Width="1.5" PointX="7.5" PointY="5.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.Roles" Width="1.5" PointX="0.75" PointY="4" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.Shifts" Width="1.5" PointX="5.25" PointY="8.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.Statuses" Width="1.5" PointX="5.25" PointY="12.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.Tax_Rates" Width="1.5" PointX="5.25" PointY="21.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.Tax_Systems" Width="1.5" PointX="5.25" PointY="14.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="AutoCashierDbModel.vw_Receipt_Totals" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
+      <Diagram DiagramId="703d3ee9eaa747d5b5cf1ff202901d30" Name="Diagram1">
+        <EntityTypeShape EntityType="AutoCashierDbModel.Customers" Width="1.5" PointX="5.25" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.Employees" Width="1.5" PointX="3" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.MeasureUnits" Width="1.5" PointX="5.25" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.Payment_Types" Width="1.5" PointX="5.25" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.Product_Groups" Width="1.5" PointX="5.25" PointY="19.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.Products" Width="1.5" PointX="7.5" PointY="18.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.Receipt_Items" Width="1.5" PointX="9.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.Receipts" Width="1.5" PointX="7.5" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.Roles" Width="1.5" PointX="0.75" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.Shifts" Width="1.5" PointX="5.25" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.Statuses" Width="1.5" PointX="5.25" PointY="14" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.Tax_Rates" Width="1.5" PointX="5.25" PointY="21.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AutoCashierDbModel.vw_Receipt_Totals" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <AssociationConnector Association="AutoCashierDbModel.FK_Receipts_Customers" ManuallyRouted="false" />
         <AssociationConnector Association="AutoCashierDbModel.FK_Employees_Roles" ManuallyRouted="false" />
         <AssociationConnector Association="AutoCashierDbModel.FK_Receipts_Employees" ManuallyRouted="false" />
@@ -32,7 +31,6 @@
         <AssociationConnector Association="AutoCashierDbModel.FK_ReceiptItems_Receipts" ManuallyRouted="false" />
         <AssociationConnector Association="AutoCashierDbModel.FK_Receipts_Shifts" ManuallyRouted="false" />
         <AssociationConnector Association="AutoCashierDbModel.FK_Receipts_Statuses" ManuallyRouted="false" />
-        <AssociationConnector Association="AutoCashierDbModel.FK_Receipts_TaxSystems" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

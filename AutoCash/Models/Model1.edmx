@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="Хранилище AutoCashierDbModel" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="Хранилище AutoCashierDbModel" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Customers">
           <Key>
             <PropertyRef Name="CustomerID" />
@@ -31,7 +31,7 @@
           <Key>
             <PropertyRef Name="UnitID" />
           </Key>
-          <Property Name="UnitID" Type="int" Nullable="false" />
+          <Property Name="UnitID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="20" Nullable="false" />
         </EntityType>
         <EntityType Name="Payment_Types">
@@ -68,7 +68,6 @@
             <PropertyRef Name="ReceiptID" />
             <PropertyRef Name="ProductID" />
           </Key>
-          <Property Name="ItemID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ReceiptID" Type="int" Nullable="false" />
           <Property Name="ProductID" Type="int" Nullable="false" />
           <Property Name="Quantity" Type="decimal" Precision="8" Scale="3" Nullable="false" />
@@ -83,14 +82,13 @@
           <Property Name="ReceiptID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ShiftID" Type="int" Nullable="false" />
           <Property Name="EmployeeID" Type="int" Nullable="false" />
-          <Property Name="TaxSystemID" Type="int" Nullable="false" />
           <Property Name="IsReturn" Type="bit" Nullable="false" />
           <Property Name="CustomerID" Type="int" />
           <Property Name="PaymentTypeID" Type="int" Nullable="false" />
           <Property Name="ReceiptDiscount" Type="decimal" Precision="10" Scale="2" Nullable="false" />
           <Property Name="CreatedAt" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="StatusID" Type="int" Nullable="false" />
-          <Property Name="TotalAmount" Type="int" />
+          <Property Name="TotalAmount" Type="decimal" Precision="10" Scale="2" />
         </EntityType>
         <EntityType Name="Roles">
           <Key>
@@ -132,13 +130,6 @@
           <Property Name="TaxRateID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="RateValue" Type="decimal" Precision="5" Scale="2" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Tax_Systems">
-          <Key>
-            <PropertyRef Name="TaxSystemID" />
-          </Key>
-          <Property Name="TaxSystemID" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <!--Ошибки, обнаруженные при создании:
 предупреждение 6002: В таблице или представлении "AutoCashierDb.dbo.vw_Receipt_Totals" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.-->
@@ -287,18 +278,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Receipts_TaxSystems">
-          <End Role="Tax_Systems" Type="Self.Tax_Systems" Multiplicity="1" />
-          <End Role="Receipts" Type="Self.Receipts" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Tax_Systems">
-              <PropertyRef Name="TaxSystemID" />
-            </Principal>
-            <Dependent Role="Receipts">
-              <PropertyRef Name="TaxSystemID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Shifts_Employees">
           <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
           <End Role="Shifts" Type="Self.Shifts" Multiplicity="*" />
@@ -356,7 +335,6 @@
           <EntitySet Name="Statuses" EntityType="Self.Statuses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tax_Rates" EntityType="Self.Tax_Rates" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Tax_Systems" EntityType="Self.Tax_Systems" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="vw_Receipt_Totals" EntityType="Self.vw_Receipt_Totals" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
 [vw_Receipt_Totals].[ReceiptID] AS [ReceiptID], 
@@ -409,16 +387,13 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
             <End Role="Statuses" EntitySet="Statuses" />
             <End Role="Receipts" EntitySet="Receipts" />
           </AssociationSet>
-          <AssociationSet Name="FK_Receipts_TaxSystems" Association="Self.FK_Receipts_TaxSystems">
-            <End Role="Tax_Systems" EntitySet="Tax_Systems" />
-            <End Role="Receipts" EntitySet="Receipts" />
-          </AssociationSet>
           <AssociationSet Name="FK_Shifts_Employees" Association="Self.FK_Shifts_Employees">
             <End Role="Employees" EntitySet="Employees" />
             <End Role="Shifts" EntitySet="Shifts" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="AutoCashierDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -452,7 +427,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           <Key>
             <PropertyRef Name="UnitID" />
           </Key>
-          <Property Name="UnitID" Type="Int32" Nullable="false" />
+          <Property Name="UnitID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Products" Relationship="Self.FK_Products_MeasureUnits" FromRole="MeasureUnits" ToRole="Products" />
         </EntityType>
@@ -496,7 +471,6 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
             <PropertyRef Name="ReceiptID" />
             <PropertyRef Name="ProductID" />
           </Key>
-          <Property Name="ItemID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ReceiptID" Type="Int32" Nullable="false" />
           <Property Name="ProductID" Type="Int32" Nullable="false" />
           <Property Name="Quantity" Type="Decimal" Precision="8" Scale="3" Nullable="false" />
@@ -513,21 +487,19 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           <Property Name="ReceiptID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ShiftID" Type="Int32" Nullable="false" />
           <Property Name="EmployeeID" Type="Int32" Nullable="false" />
-          <Property Name="TaxSystemID" Type="Int32" Nullable="false" />
           <Property Name="IsReturn" Type="Boolean" Nullable="false" />
           <Property Name="CustomerID" Type="Int32" />
           <Property Name="PaymentTypeID" Type="Int32" Nullable="false" />
           <Property Name="ReceiptDiscount" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
           <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="StatusID" Type="Int32" Nullable="false" />
+          <Property Name="TotalAmount" Type="Decimal" Precision="10" Scale="2" />
           <NavigationProperty Name="Customers" Relationship="Self.FK_Receipts_Customers" FromRole="Receipts" ToRole="Customers" />
           <NavigationProperty Name="Employees" Relationship="Self.FK_Receipts_Employees" FromRole="Receipts" ToRole="Employees" />
           <NavigationProperty Name="Payment_Types" Relationship="Self.FK_Receipts_Payment_Types" FromRole="Receipts" ToRole="Payment_Types" />
           <NavigationProperty Name="Receipt_Items" Relationship="Self.FK_ReceiptItems_Receipts" FromRole="Receipts" ToRole="Receipt_Items" />
           <NavigationProperty Name="Shifts" Relationship="Self.FK_Receipts_Shifts" FromRole="Receipts" ToRole="Shifts" />
           <NavigationProperty Name="Statuses" Relationship="Self.FK_Receipts_Statuses" FromRole="Receipts" ToRole="Statuses" />
-          <NavigationProperty Name="Tax_Systems" Relationship="Self.FK_Receipts_TaxSystems" FromRole="Receipts" ToRole="Tax_Systems" />
-          <Property Name="TotalAmount" Type="Int32" />
         </EntityType>
         <EntityType Name="Roles">
           <Key>
@@ -574,14 +546,6 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="RateValue" Type="Decimal" Precision="5" Scale="2" Nullable="false" />
           <NavigationProperty Name="Products" Relationship="Self.FK_Products_VATRates" FromRole="Tax_Rates" ToRole="Products" />
-        </EntityType>
-        <EntityType Name="Tax_Systems">
-          <Key>
-            <PropertyRef Name="TaxSystemID" />
-          </Key>
-          <Property Name="TaxSystemID" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Receipts" Relationship="Self.FK_Receipts_TaxSystems" FromRole="Tax_Systems" ToRole="Receipts" />
         </EntityType>
         <EntityType Name="vw_Receipt_Totals">
           <Key>
@@ -740,18 +704,6 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Receipts_TaxSystems">
-          <End Role="Tax_Systems" Type="Self.Tax_Systems" Multiplicity="1" />
-          <End Role="Receipts" Type="Self.Receipts" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Tax_Systems">
-              <PropertyRef Name="TaxSystemID" />
-            </Principal>
-            <Dependent Role="Receipts">
-              <PropertyRef Name="TaxSystemID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="AutoCashierDbEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Customers" EntityType="Self.Customers" />
           <EntitySet Name="Employees" EntityType="Self.Employees" />
@@ -766,7 +718,6 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           <EntitySet Name="Statuses" EntityType="Self.Statuses" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
           <EntitySet Name="Tax_Rates" EntityType="Self.Tax_Rates" />
-          <EntitySet Name="Tax_Systems" EntityType="Self.Tax_Systems" />
           <EntitySet Name="vw_Receipt_Totals" EntityType="Self.vw_Receipt_Totals" />
           <AssociationSet Name="FK_Receipts_Customers" Association="Self.FK_Receipts_Customers">
             <End Role="Customers" EntitySet="Customers" />
@@ -814,10 +765,6 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           </AssociationSet>
           <AssociationSet Name="FK_Receipts_Statuses" Association="Self.FK_Receipts_Statuses">
             <End Role="Statuses" EntitySet="Statuses" />
-            <End Role="Receipts" EntitySet="Receipts" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Receipts_TaxSystems" Association="Self.FK_Receipts_TaxSystems">
-            <End Role="Tax_Systems" EntitySet="Tax_Systems" />
             <End Role="Receipts" EntitySet="Receipts" />
           </AssociationSet>
           <FunctionImport Name="sp_alterdiagram">
@@ -935,7 +882,6 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           <EntitySetMapping Name="Receipt_Items">
             <EntityTypeMapping TypeName="AutoCashierDbModel.Receipt_Items">
               <MappingFragment StoreEntitySet="Receipt_Items">
-                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
                 <ScalarProperty Name="ReceiptID" ColumnName="ReceiptID" />
                 <ScalarProperty Name="ProductID" ColumnName="ProductID" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
@@ -948,17 +894,16 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           <EntitySetMapping Name="Receipts">
             <EntityTypeMapping TypeName="AutoCashierDbModel.Receipts">
               <MappingFragment StoreEntitySet="Receipts">
-                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
                 <ScalarProperty Name="ReceiptID" ColumnName="ReceiptID" />
                 <ScalarProperty Name="ShiftID" ColumnName="ShiftID" />
                 <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
-                <ScalarProperty Name="TaxSystemID" ColumnName="TaxSystemID" />
                 <ScalarProperty Name="IsReturn" ColumnName="IsReturn" />
                 <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
                 <ScalarProperty Name="PaymentTypeID" ColumnName="PaymentTypeID" />
                 <ScalarProperty Name="ReceiptDiscount" ColumnName="ReceiptDiscount" />
                 <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
                 <ScalarProperty Name="StatusID" ColumnName="StatusID" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1005,14 +950,6 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
                 <ScalarProperty Name="TaxRateID" ColumnName="TaxRateID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="RateValue" ColumnName="RateValue" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Tax_Systems">
-            <EntityTypeMapping TypeName="AutoCashierDbModel.Tax_Systems">
-              <MappingFragment StoreEntitySet="Tax_Systems">
-                <ScalarProperty Name="TaxSystemID" ColumnName="TaxSystemID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -41,7 +41,6 @@ namespace AutoCash.Models
         public DbSet<Statuses> Statuses { get; set; }
         public DbSet<sysdiagrams> sysdiagrams { get; set; }
         public DbSet<Tax_Rates> Tax_Rates { get; set; }
-        public DbSet<Tax_Systems> Tax_Systems { get; set; }
         public DbSet<vw_Receipt_Totals> vw_Receipt_Totals { get; set; }
     
         public virtual int sp_alterdiagram(string diagramname, Nullable<int> owner_id, Nullable<int> version, byte[] definition)
