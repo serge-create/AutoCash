@@ -25,24 +25,12 @@
                 </StackPanel>
 
                 <Button x:Name="btnApplyFilter" Content="Сформировать отчет" Width="160" Height="32" 
-                        VerticalAlignment="Bottom" Background="#2563EB" Foreground="White" FontWeight="Bold" 
-                        BorderThickness="0" Click="btnApplyFilter_Click">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="4"/>
-                        </Style>
-                    </Button.Resources>
-                </Button>
+                        VerticalAlignment="Bottom" Background="#3B82F6" FontWeight="Bold" 
+                        Click="btnApplyFilter_Click"/>
 
                 <Button x:Name="btnResetFilter" Content="Сбросить" Width="90" Height="32" Margin="10,0,0,0"
-                        VerticalAlignment="Bottom" Background="#94A3B8" Foreground="White" 
-                        BorderThickness="0" Click="btnResetFilter_Click">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="4"/>
-                        </Style>
-                    </Button.Resources>
-                </Button>
+                        VerticalAlignment="Bottom" Background="#64748B" 
+                        Click="btnResetFilter_Click"/>
             </StackPanel>
         </Border>
 

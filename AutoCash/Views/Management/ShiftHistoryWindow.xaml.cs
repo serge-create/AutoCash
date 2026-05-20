@@ -42,7 +42,7 @@ namespace AutoCash.Views.Management
 
             try
             {
-                using (var db = new AutoCashierDbEntities1()) // Проверь имя своего контекста
+                using (var db = new Models.AutoCashierDbEntities1()) // Проверь имя своего контекста
                 {
                     // Базовый LINQ-запрос с жадной загрузкой сотрудников
                     var shiftsQuery = db.Shifts.Include(s => s.Employees).AsQueryable();

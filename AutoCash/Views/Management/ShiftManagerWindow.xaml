@@ -55,22 +55,10 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="btnOpenShift" Grid.Column="0" Content="ОТКРЫТЬ СМЕНУ" Height="50" Margin="0,0,10,0"
-                    Background="#22C55E" Foreground="White" FontSize="16" FontWeight="Bold" BorderThickness="0" Click="btnOpenShift_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="6"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                    Background="#10B981" FontSize="16" FontWeight="Bold" Click="btnOpenShift_Click"/>
 
             <Button x:Name="btnCloseShift" Grid.Column="1" Content="ЗАКРЫТЬ СМЕНУ (Z-Отчет)" Height="50" Margin="10,0,0,0"
-                    Background="#EF4444" Foreground="White" FontSize="16" FontWeight="Bold" BorderThickness="0" Click="btnCloseShift_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="6"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                    Background="#EF4444" FontSize="16" FontWeight="Bold" Click="btnCloseShift_Click"/>
         </Grid>
     </Grid>
 </Window>

@@ -41,7 +41,7 @@ namespace AutoCash.Views.Management
                     // Заполняем выпадающие списки в карточке
                     cbCardGroup.ItemsSource = db.Product_Groups.ToList();
                     cbCardUnit.ItemsSource = db.MeasureUnits.ToList();
-
+                    cbVATRate.ItemsSource = db.Tax_Rates.ToList();
                     // Заполняем фильтр групп (+ добавляем пустой элемент "Все группы")
                     var groupsForFilter = db.Product_Groups.ToList();
                     groupsForFilter.Insert(0, new Product_Groups { GroupID = -1, Name = "Все категории" });
@@ -113,6 +113,7 @@ namespace AutoCash.Views.Management
                 txtStock.Text = product.StockQuantity.ToString();
                 cbCardGroup.SelectedValue = product.GroupID;
                 cbCardUnit.SelectedValue = product.MeasureUnitID;
+                cbVATRate.SelectedValue = product.VATRateID;
 
                 lblCardTitle.Text = "Редактирование товара";
             }
@@ -128,18 +129,21 @@ namespace AutoCash.Views.Management
             cbCardGroup.SelectedIndex = -1;
             cbCardUnit.SelectedIndex = -1;
             lblCardTitle.Text = "Новый товар";
+            txtArticle.Clear();
+            txtDiscount.Clear();
+            cbVATRate.SelectedIndex = -1;
         }
 
         // Добавление / Изменение товара в БД
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             // Базовая валидация полей
-            if (string.IsNullOrWhiteSpace(txtProductName.Text) || !decimal.TryParse(txtPrice.Text, out decimal price))
+            if (string.IsNullOrWhiteSpace(txtProductName.Text) || !decimal.TryParse(txtPrice.Text, out decimal price) || cbVATRate.SelectedValue == null)
             {
-                MessageBox.Show("Заполните корректно Наименование и Цену!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Заполните корректно Наименование, Цену и выберите ставку НДС!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-
+            decimal.TryParse(txtDiscount.Text, out decimal discount);
             try
             {
                 using (var db = new Models.AutoCashierDbEntities1())
@@ -148,6 +152,9 @@ namespace AutoCash.Views.Management
                     {
                         var newProduct = new Products
                         {
+                            Article = txtArticle.Text.Trim(),           // НОВОЕ ПОЛЕ
+                            DiscountPercent = discount,                 // НОВОЕ ПОЛЕ
+                            VATRateID = (int)cbVATRate.SelectedValue,
                             Barcode = txtBarcode.Text,
                             Name = txtProductName.Text,
                             Price = price,
@@ -162,6 +169,9 @@ namespace AutoCash.Views.Management
                         var productToUpdate = db.Products.Find(_selectedProduct.ProductID);
                         if (productToUpdate != null)
                         {
+                            productToUpdate.Article = txtArticle.Text.Trim();
+                            productToUpdate.DiscountPercent = discount;
+                            productToUpdate.VATRateID = (int)cbVATRate.SelectedValue;
                             productToUpdate.Barcode = txtBarcode.Text;
                             productToUpdate.Name = txtProductName.Text;
                             productToUpdate.Price = price;

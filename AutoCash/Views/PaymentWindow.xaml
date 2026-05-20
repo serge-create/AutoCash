@@ -47,24 +47,12 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="btnCancel" Grid.Column="0" Content="ОТМЕНА (Esc)" Height="55" Margin="0,0,5,0"
-                    Background="#EF4444" Foreground="White" FontSize="16" FontWeight="Bold" BorderThickness="0"
-                    Click="btnCancel_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="6"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                    Background="#EF4444" FontSize="16" FontWeight="Bold"
+                    Click="btnCancel_Click"/>
 
             <Button x:Name="btnConfirm" Grid.Column="1" Content="ПРОБИТЬ ЧЕК (Enter)" Height="55" Margin="5,0,0,0"
-                    Background="#22C55E" Foreground="White" FontSize="16" FontWeight="Bold" BorderThickness="0"
-                    Click="btnConfirm_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="6"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                    Background="#10B981" FontSize="16" FontWeight="Bold"
+                    Click="btnConfirm_Click"/>
         </Grid>
     </Grid>
 </Window>

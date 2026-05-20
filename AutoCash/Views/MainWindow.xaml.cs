@@ -218,7 +218,99 @@ namespace AutoCash.Views
             loginWindow.Show();
             this.Close();
         }
+        // ==========================================
+        // ЛОГИКА ОПЛАТЫ И СОХРАНЕНИЯ ЧЕКА
+        // ==========================================
 
+        private void btnPayCash_Click(object sender, RoutedEventArgs e) => ProcessPayment("Наличные");
+        private void btnPayCard_Click(object sender, RoutedEventArgs e) => ProcessPayment("Карта");
+
+        private void ProcessPayment(string paymentMethod)
+        {
+            // 1. Проверяем, открыта ли смена
+            if (AppState.CurrentShift == null)
+            {
+                MessageBox.Show("Смена не открыта! Перейдите в 'Кассовые смены' и откройте смену.", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // 2. Проверяем, есть ли товары в чеке
+            if (_cartItems.Count == 0)
+            {
+                MessageBox.Show("Чек пуст. Добавьте товары для оплаты.", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // 3. Открываем наше окно оплаты
+            PaymentWindow paymentWin = new PaymentWindow(_currentTotal, paymentMethod);
+            paymentWin.Owner = this;
+
+            // 4. Если кассир успешно пробил чек (нажал Enter в PaymentWindow)
+            if (paymentWin.ShowDialog() == true)
+            {
+                SaveReceiptToDatabase(paymentMethod);
+            }
+        }
+
+        private void SaveReceiptToDatabase(string paymentMethod)
+        {
+            try
+            {
+                using (var db = new AutoCashierDbEntities1()) // Убедись, что имя контекста твоё
+                {
+                    // Получаем ID типа оплаты из БД (например: 1 - Наличные, 2 - Карта)
+                    var paymentType = db.Payment_Types.FirstOrDefault(p => p.Name == paymentMethod);
+                    int paymentTypeId = paymentType != null ? paymentType.PaymentTypeID : 1;
+
+                    // СОЗДАЕМ ЗАГОЛОВОК ЧЕКА
+                    var newReceipt = new Receipts
+                    {
+                        ShiftID = AppState.CurrentShift.ShiftID, // ID текущей смены
+                        EmployeeID = AppState.CurrentUser.EmployeeID,    // Кто пробил
+                        CreatedAt = DateTime.Now,
+                        IsReturn = false,
+                        PaymentTypeID = paymentTypeId,
+                        StatusID = 1, // 1 - Приход (продажа) по 54-ФЗ
+                        ReceiptDiscount = 0, // Скидку на весь чек пока ставим 0
+                    };
+
+                    db.Receipts.Add(newReceipt);
+                    db.SaveChanges(); // Сохраняем, чтобы БД сгенерировала ReceiptID для позиций чека
+
+                    // СОЗДАЕМ СТРОКИ ЧЕКА И СПИСЫВАЕМ ОСТАТКИ
+                    foreach (var item in _cartItems)
+                    {
+                        // Записываем товар в чек
+                        var receiptItem = new Receipt_Items
+                        {
+                            ReceiptID = newReceipt.ReceiptID,
+                            ProductID = item.ProductID,
+                            Quantity = item.Quantity,
+                            Price = item.Price,
+                            SubTotal = item.Total
+                        };
+                        db.Receipt_Items.Add(receiptItem);
+
+                        // Списываем остаток товара со склада
+                        var productInDb = db.Products.Find(item.ProductID);
+                        if (productInDb != null)
+                        {
+                            productInDb.StockQuantity -= (int)item.Quantity;
+                        }
+                    }
+
+                    db.SaveChanges(); // Сохраняем все позиции и обновленные остатки разом (Транзакция)
+                }
+
+                // Очищаем интерфейс для следующего покупателя
+                _cartItems.Clear();
+                UpdateTotal();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Критическая ошибка при сохранении чека в БД:\n{ex.Message}", "Ошибка СУБД", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         // Заглушки других окон (админка)
         private void btnProducts_Click(object sender, RoutedEventArgs e) { new Management.ProductManager().ShowDialog(); }
         private void btnShifts_Click(object sender, RoutedEventArgs e) { new Management.ShiftManagerWindow().ShowDialog(); }

@@ -29,22 +29,10 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="btnCancel" Grid.Column="0" Content="Отмена (Esc)" Height="35" Margin="0,0,5,0" 
-                    Background="#94A3B8" Foreground="White" Click="btnCancel_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="4"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                    Background="#64748B" Click="btnCancel_Click"/>
 
             <Button x:Name="btnSave" Grid.Column="1" Content="Сохранить (Enter)" Height="35" Margin="5,0,0,0" 
-                    Background="#22C55E" Foreground="White" FontWeight="Bold" Click="btnSave_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="4"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                    Background="#10B981" FontWeight="Bold" Click="btnSave_Click"/>
         </Grid>
     </Grid>
 </Window>

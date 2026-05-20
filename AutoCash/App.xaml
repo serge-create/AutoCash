@@ -4,6 +4,78 @@
              xmlns:local="clr-namespace:AutoCash"
              StartupUri="Views/LoginWindow.xaml">
     <Application.Resources>
-         
+        <!-- Modern Button Style -->
+        <Style TargetType="Button">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#3B82F6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="ButtonBorder"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    CornerRadius="6">
+                                <Border.Effect>
+                                    <DropShadowEffect x:Name="Shadow"
+                                                      BlurRadius="8"
+                                                      Color="#000000"
+                                                      Opacity="0.15"
+                                                      ShadowDepth="2"/>
+                                </Border.Effect>
+                            </Border>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center"
+                                            Margin="{TemplateBinding Padding}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect BlurRadius="12"
+                                                          Color="#000000"
+                                                          Opacity="0.25"
+                                                          ShadowDepth="4"/>
+                                    </Setter.Value>
+                                </Setter>
+                              
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect BlurRadius="4"
+                                                          Color="#000000"
+                                                          Opacity="0.1"
+                                                          ShadowDepth="1"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.5"/>
+                                <Setter TargetName="ContentPresenter" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Color Resources for Button Variants -->
+        <SolidColorBrush x:Key="PrimaryButtonColor">#3B82F6</SolidColorBrush>
+        <SolidColorBrush x:Key="SuccessButtonColor">#10B981</SolidColorBrush>
+        <SolidColorBrush x:Key="WarningButtonColor">#F59E0B</SolidColorBrush>
+        <SolidColorBrush x:Key="DangerButtonColor">#EF4444</SolidColorBrush>
+        <SolidColorBrush x:Key="InfoButtonColor">#0EA5E9</SolidColorBrush>
+
     </Application.Resources>
 </Application>

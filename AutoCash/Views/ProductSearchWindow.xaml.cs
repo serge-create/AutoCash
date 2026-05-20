@@ -31,7 +31,7 @@ namespace AutoCash.Views
         {
             try
             {
-                using (var db = new AutoCashierDbEntities1()) // Замени на свой контекст
+                using (var db = new Models.AutoCashierDbEntities1()) // Замени на свой контекст
                 {
                     // Загружаем только товары, которые есть в наличии (Остаток > 0). 
                     // Если хочешь выводить все, убери Where.
