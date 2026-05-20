@@ -138,12 +138,16 @@ namespace AutoCash.Views.Management
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             // Базовая валидация полей
-            if (string.IsNullOrWhiteSpace(txtProductName.Text) || !decimal.TryParse(txtPrice.Text, out decimal price) || cbVATRate.SelectedValue == null)
+            if (string.IsNullOrWhiteSpace(txtProductName.Text) || !decimal.TryParse(txtPrice.Text, out decimal price) || price <= 0 || cbVATRate.SelectedValue == null)
             {
                 MessageBox.Show("Заполните корректно Наименование, Цену и выберите ставку НДС!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            decimal.TryParse(txtDiscount.Text, out decimal discount);
+            if (!decimal.TryParse(txtDiscount.Text, out decimal discount))
+            {
+                MessageBox.Show("Заполните корректно Скидку!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             try
             {
                 using (var db = new Models.AutoCashierDbEntities1())

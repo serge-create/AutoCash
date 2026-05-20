@@ -11,7 +11,7 @@
             <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Background="White" CornerRadius="6" Padding="10" Margin="0,0,15,0">
+        <Border Grid.Column="0" Background="White" CornerRadius="6" Padding="10" Margin="0,0,55,0">
             <DataGrid x:Name="dgEmployees" AutoGenerateColumns="False" IsReadOnly="True" 
                       HeadersVisibility="Column" FontSize="14" SelectionChanged="dgEmployees_SelectionChanged"
                       Background="White" RowHeight="35" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0">
@@ -23,7 +23,7 @@
             </DataGrid>
         </Border>
 
-        <Border Grid.Column="1" Background="White" CornerRadius="6" Padding="20">
+        <Border Background="White" CornerRadius="6" Padding="20" Grid.ColumnSpan="2" Margin="480,0,0,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -38,10 +38,26 @@
                     <TextBox x:Name="txtFullName" Height="35" Margin="0,0,0,15" Padding="5" FontSize="14"/>
 
                     <TextBlock Text="Роль в системе" FontSize="12" Foreground="#475569" Margin="0,0,0,4"/>
-                    <ComboBox x:Name="cbRoles" Height="35" Margin="0,0,0,15" DisplayMemberPath="RoleName" FontSize="14"/>
+                    <ComboBox x:Name="cbRoles" Height="35" Margin="0,0,0,15" DisplayMemberPath="RoleName" SelectedValuePath="RoleID" FontSize="14"/>
 
                     <TextBlock Text="Индивидуальный ПИН-код" FontSize="12" Foreground="#475569" Margin="0,0,0,4"/>
-                    <TextBox x:Name="txtPinCode" Height="35" Margin="0,0,0,5" Padding="5" FontSize="14" FontWeight="Bold" MaxLength="10"/>
+                    <Grid Margin="0,0,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="txtPinCode" Grid.Column="0" Height="35" Padding="5" FontSize="14" FontWeight="Bold" MaxLength="6" Margin="0,0,5,0"/>
+
+                        <Button x:Name="btnGeneratePin" Grid.Column="1" Content="Сгенерировать" Height="35"
+            Background="#10B981" Foreground="White" BorderThickness="0" Click="btnGeneratePin_Click" Margin="10,0,0,0">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="4"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </Grid>
                     <TextBlock Text="*Используется для входа в кассу" FontSize="10" Foreground="#94A3B8" Margin="0,0,0,15"/>
                 </StackPanel>
 

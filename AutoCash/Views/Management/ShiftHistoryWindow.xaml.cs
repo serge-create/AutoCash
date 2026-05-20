@@ -8,8 +8,10 @@ using AutoCash.Models;
 
 namespace AutoCash.Views.Management
 {
+        
     public partial class ShiftHistoryWindow : Window
     {
+        
         public ShiftHistoryWindow()
         {
             InitializeComponent();
@@ -20,6 +22,7 @@ namespace AutoCash.Views.Management
             // Безопасность: только Администратор может просматривать денежную аналитику
             if (AppState.CurrentUser?.Roles?.RoleName != "Администратор")
             {
+                
                 MessageBox.Show("Доступ к финансовой аналитике разрешен только Администратору системы.",
                                 "Доступ ограничен", MessageBoxButton.OK, MessageBoxImage.Stop);
                 this.Close();

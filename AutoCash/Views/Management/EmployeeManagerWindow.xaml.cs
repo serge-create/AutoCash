@@ -54,6 +54,7 @@ namespace AutoCash.Views.Management
         {
             if (dgEmployees.SelectedItem is Employees emp)
             {
+                
                 _selectedEmployee = emp;
                 txtFullName.Text = emp.FullName;
                 txtPinCode.Text = emp.PinCode;
@@ -88,8 +89,7 @@ namespace AutoCash.Views.Management
             {
                 using (var db = new AutoCashierDbEntities1())
                 {
-                    // ПРОВЕРКА НА УНИКАЛЬНОСТЬ ПИН-КОДА
-                    // Ищем, есть ли в базе кто-то с таким же ПИНом, кроме самого редактируемого сотрудника
+
                     int currentEmpId = _selectedEmployee?.EmployeeID ?? 0;
                     bool pinExists = db.Employees.Any(emp => emp.PinCode == newPin && emp.EmployeeID != currentEmpId);
 
@@ -105,9 +105,9 @@ namespace AutoCash.Views.Management
                         // Добавление нового сотрудника
                         var newEmp = new Employees
                         {
-                            FullName = txtFullName.Text.Trim(),
+                            FullName = txtFullName.Text,
                             PinCode = newPin,
-                            RoleID = (int)cbRoles.SelectedValue
+                            RoleID = Convert.ToInt32(cbRoles.SelectedValue)
                         };
                         db.Employees.Add(newEmp);
                     }
@@ -122,8 +122,8 @@ namespace AutoCash.Views.Management
                             empToUpdate.RoleID = (int)cbRoles.SelectedValue;
                         }
                     }
-
                     db.SaveChanges();
+
                 }
 
                 MessageBox.Show("Данные сотрудника успешно сохранены!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -132,6 +132,7 @@ namespace AutoCash.Views.Management
             }
             catch (Exception ex)
             {
+                
                 MessageBox.Show($"Ошибка сохранения: {ex.Message}", "Ошибка БД", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -139,6 +140,7 @@ namespace AutoCash.Views.Management
         // Удаление сотрудника
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
+            
             if (_selectedEmployee == null) return;
 
             // Запрет на удаление самого себя (чтобы админ случайно не удалил свою учетку и не потерял доступ)
@@ -174,6 +176,38 @@ namespace AutoCash.Views.Management
                                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        // Объект для генерации случайных чисел
+        private Random _random = new Random();
+
+        // Метод генерации гарантированно уникального ПИН-кода
+        private string GenerateUniquePin()
+        {
+            string newPin;
+            bool isUnique = false;
+
+            using (var db = new AutoCashierDbEntities1()) // Убедись, что имя контекста совпадает с твоим
+            {
+                do
+                {
+                    // Генерируем случайное 6-значное число от 100000 до 999999
+                    newPin = _random.Next(100000, 1000000).ToString();
+
+                    // Проверяем, существует ли уже сотрудник с таким ПИН-кодом в БД
+                    isUnique = !db.Employees.Any(emp => emp.PinCode == newPin);
+
+                } while (!isUnique); // Если ПИН уже есть, цикл повторится и сгенерирует новый
+            }
+
+            return newPin;
+        }
+
+        // Обработчик нажатия на кнопку "Сгенерировать"
+        private void btnGeneratePin_Click(object sender, RoutedEventArgs e)
+        {
+            // Генерируем уникальный ПИН и сразу подставляем его в текстовое поле
+            txtPinCode.Text = GenerateUniquePin();
         }
     }
 }

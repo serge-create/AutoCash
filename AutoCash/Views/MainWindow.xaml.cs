@@ -66,6 +66,11 @@ namespace AutoCash.Views
             // Обработка горячих клавиш оплаты (F9 / F10)
             // (Кнопкам оплаты мы дадим имена и события чуть позже, пока оставляем так)
             if (e.Key == Key.F3) { btnSearchProduct_Click(null, null); return; }
+            if (e.Key == Key.F9) { btnPayCash_Click(null, null); return; }
+            if (e.Key == Key.F8) { btnPayCard_Click(null, null); return; }
+            {
+                
+            }
 
             // Логика сканера штрихкодов (Считывает Enter в конце)
             if (e.Key == Key.Enter)
