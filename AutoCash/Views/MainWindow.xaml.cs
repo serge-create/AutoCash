@@ -64,7 +64,6 @@ namespace AutoCash.Views
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             // Обработка горячих клавиш оплаты (F9 / F10)
-            // (Кнопкам оплаты мы дадим имена и события чуть позже, пока оставляем так)
             if (e.Key == Key.F3) { btnSearchProduct_Click(null, null); return; }
             if (e.Key == Key.F9) { btnPayCash_Click(null, null); return; }
             if (e.Key == Key.F8) { btnPayCard_Click(null, null); return; }
@@ -78,7 +77,7 @@ namespace AutoCash.Views
                 if (!string.IsNullOrEmpty(_barcodeBuffer))
                 {
                     ProcessBarcode(_barcodeBuffer);
-                    _barcodeBuffer = ""; // Очищаем буфер после обработки
+                    _barcodeBuffer = "";
                 }
             }
             else
@@ -265,17 +264,7 @@ namespace AutoCash.Views
                 using (var db = new AutoCashierDbEntities1()) // Убедись, что имя контекста твоё
                 {
                     // Получаем ID типа оплаты из БД (например: 1 - Наличные, 2 - Карта)
-                    // Получаем ID типа оплаты из БД
                     var paymentType = db.Payment_Types.Where(x => x.Name == paymentMethod).FirstOrDefault();
-                    
-                    // ДОБАВЛЕНА ЗАЩИТА:
-                    if (paymentType == null)
-                    {
-                        MessageBox.Show($"Критическая ошибка: Тип оплаты '{paymentMethod}' не найден в справочнике Payment_Types базы данных!\n\nПроверьте, что таблица заполнена и названия совпадают.",
-                                        "Ошибка настроек БД", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return; // Прерываем сохранение, чтобы программа не упала!
-                    }
-
                     int paymentTypeId = paymentType.PaymentTypeID;
                     // СОЗДАЕМ ЗАГОЛОВОК ЧЕКА
                     var newReceipt = new Receipts
@@ -283,9 +272,9 @@ namespace AutoCash.Views
                         ShiftID = AppState.CurrentShift.ShiftID, // ID текущей смены
                         EmployeeID = AppState.CurrentUser.EmployeeID,    // Кто пробил
                         IsReturn = false,
-                        CustomerID = null, // Пока не реализуем клиентов, оставляем null
+                        CustomerID = null, // Дополнительный функционал для коммерческой версии
                         PaymentTypeID = paymentTypeId,
-                        ReceiptDiscount = 0, // Скидку на весь чек пока ставим 0
+                        ReceiptDiscount = 0, // Дополнительный функционал для коммерческой версии
                         CreatedAt = DateTime.Now,
                         StatusID = 1, // 1 - Приход (продажа) по 54-ФЗ
                         TotalAmount = _cartItems.Sum(c => c.Total)
@@ -316,7 +305,7 @@ namespace AutoCash.Views
                         }
                     }
 
-                    db.SaveChanges(); // Сохраняем все позиции и обновленные остатки разом (Транзакция)
+                    db.SaveChanges(); // Сохраняем все позиции и обновленные остатки (Транзакция)
                 }
 
                 // Очищаем интерфейс для следующего покупателя

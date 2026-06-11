@@ -45,7 +45,7 @@ namespace AutoCash.Views.Management
 
             try
             {
-                using (var db = new Models.AutoCashierDbEntities1()) // Проверь имя своего контекста
+                using (var db = new Models.AutoCashierDbEntities1())
                 {
                     // Базовый LINQ-запрос с жадной загрузкой сотрудников
                     var shiftsQuery = db.Shifts.Include(s => s.Employees).AsQueryable();
@@ -84,7 +84,7 @@ namespace AutoCash.Views.Management
                     // Выводим результат в таблицу
                     dgShifts.ItemsSource = displayList;
 
-                    // Считаем общие итоги для подвала
+                    // Считаем общие итоги
                     txtTotalShifts.Text = displayList.Count.ToString();
                     decimal grandTotal = displayList.Sum(item => item.TotalRevenue);
                     txtGrandTotalRevenue.Text = $"{grandTotal:F2} ₽";

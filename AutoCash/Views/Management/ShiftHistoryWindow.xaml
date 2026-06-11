@@ -24,11 +24,11 @@
                     <DatePicker x:Name="dpEnd" Width="150" Height="32"/>
                 </StackPanel>
 
-                <Button x:Name="btnApplyFilter" Content="Сформировать отчет" Width="160" Height="32" 
+                <Button x:Name="btnApplyFilter" Content="Сформировать отчет" Width="188" Height="37" 
                         VerticalAlignment="Bottom" Background="#3B82F6" FontWeight="Bold" 
                         Click="btnApplyFilter_Click"/>
 
-                <Button x:Name="btnResetFilter" Content="Сбросить" Width="90" Height="32" Margin="10,0,0,0"
+                <Button x:Name="btnResetFilter" Content="Сбросить" Width="106" Height="37" Margin="10,0,0,0"
                         VerticalAlignment="Bottom" Background="#64748B" 
                         Click="btnResetFilter_Click"/>
             </StackPanel>
@@ -37,7 +37,7 @@
         <Border Grid.Row="1" Background="White" CornerRadius="6" Padding="10">
             <DataGrid x:Name="dgShifts" AutoGenerateColumns="False" IsReadOnly="True" 
                       HeadersVisibility="Column" FontSize="14" RowHeight="35"
-                      Background="White" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0">
+                      Background="White" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0" >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="№ Смены" Binding="{Binding ShiftID}" Width="80"/>
                     <DataGridTextColumn Header="ФИО Кассира" Binding="{Binding CashierName}" Width="*"/>

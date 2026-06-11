@@ -1,7 +1,7 @@
 ﻿<Window x:Class="AutoCash.Views.PaymentWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Оформление оплаты" Height="500" Width="450"
+        Title="Оформление оплаты" Height="525" Width="475"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         Background="#F8FAFC" Loaded="Window_Loaded" KeyDown="Window_KeyDown">
 

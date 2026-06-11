@@ -187,7 +187,7 @@ namespace AutoCash.Views.Management
             string newPin;
             bool isUnique = false;
 
-            using (var db = new AutoCashierDbEntities1()) // Убедись, что имя контекста совпадает с твоим
+            using (var db = new AutoCashierDbEntities1())
             {
                 do
                 {
