@@ -29,6 +29,7 @@ namespace AutoCash.Models
         public int VATRateID { get; set; }
         public Nullable<decimal> DiscountPercent { get; set; }
         public Nullable<int> StockQuantity { get; set; }
+        public bool IsDeleted { get; set; }
     
         public virtual MeasureUnits MeasureUnits { get; set; }
         public virtual Product_Groups Product_Groups { get; set; }

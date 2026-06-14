@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Хранилище AutoCashierDbModel" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Хранилище AutoCashierDbModel" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Customers">
           <Key>
             <PropertyRef Name="CustomerID" />
@@ -38,7 +38,7 @@
           <Key>
             <PropertyRef Name="PaymentTypeID" />
           </Key>
-          <Property Name="PaymentTypeID" Type="int" Nullable="false" />
+          <Property Name="PaymentTypeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Product_Groups">
@@ -62,6 +62,7 @@
           <Property Name="VATRateID" Type="int" Nullable="false" />
           <Property Name="DiscountPercent" Type="decimal" Precision="5" Scale="2" />
           <Property Name="StockQuantity" Type="int" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Receipt_Items">
           <Key>
@@ -110,7 +111,7 @@
           <Key>
             <PropertyRef Name="StatusID" />
           </Key>
-          <Property Name="StatusID" Type="int" Nullable="false" />
+          <Property Name="StatusID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="sysdiagrams">
@@ -392,8 +393,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
             <End Role="Shifts" EntitySet="Shifts" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="AutoCashierDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -465,6 +465,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           <NavigationProperty Name="Product_Groups" Relationship="Self.FK_Products_Groups" FromRole="Products" ToRole="Product_Groups" />
           <NavigationProperty Name="Tax_Rates" Relationship="Self.FK_Products_VATRates" FromRole="Products" ToRole="Tax_Rates" />
           <NavigationProperty Name="Receipt_Items" Relationship="Self.FK_ReceiptItems_Products" FromRole="Products" ToRole="Receipt_Items" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Receipt_Items">
           <Key>
@@ -866,6 +867,7 @@ FROM [dbo].[vw_Receipt_Totals] AS [vw_Receipt_Totals]</DefiningQuery>
           <EntitySetMapping Name="Products">
             <EntityTypeMapping TypeName="AutoCashierDbModel.Products">
               <MappingFragment StoreEntitySet="Products">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="ProductID" ColumnName="ProductID" />
                 <ScalarProperty Name="GroupID" ColumnName="GroupID" />
                 <ScalarProperty Name="Article" ColumnName="Article" />

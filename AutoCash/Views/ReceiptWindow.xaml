@@ -1,0 +1,215 @@
+<Window x:Class="AutoCash.Views.ReceiptWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Кассовый чек"
+        Width="380" SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="#F5F0E8"
+        FontFamily="Courier New">
+
+    <Window.Resources>
+        <!-- Базовый стиль: тёмные буквы на бумаге -->
+        <Style x:Key="ReceiptText" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Courier New"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#1A1A1A"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style x:Key="ReceiptBold" TargetType="TextBlock" BasedOn="{StaticResource ReceiptText}">
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <!-- Разделительные линии — чуть серее -->
+        <Style x:Key="Divider" TargetType="TextBlock" BasedOn="{StaticResource ReceiptText}">
+            <Setter Property="Foreground" Value="#999999"/>
+        </Style>
+        <!-- Мелкий нижний текст (ФН, адрес ФНС) -->
+        <Style x:Key="ReceiptMuted" TargetType="TextBlock" BasedOn="{StaticResource ReceiptText}">
+            <Setter Property="Foreground" Value="#777777"/>
+            <Setter Property="FontSize" Value="10"/>
+        </Style>
+    </Window.Resources>
+
+    <!-- Прокрутка на случай большого чека -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="700">
+        <Border Background="#F5F0E8"
+                BorderBrush="#CCBBAA" BorderThickness="1"
+                Margin="10,10,10,10"
+                Padding="14,12,14,14">
+            <StackPanel x:Name="spReceipt">
+
+                <!-- ══════ ШАПКА ══════ -->
+                <TextBlock Text='ООО "ГАМАЮН"'
+                           Style="{StaticResource ReceiptBold}"
+                           FontSize="14" TextAlignment="Center"
+                           Margin="0,0,0,2"/>
+                <TextBlock x:Name="txtShopAddress"
+                           Text="г. Орск, ул. Строителей, д. 28а"
+                           Style="{StaticResource ReceiptText}"
+                           TextAlignment="Center" Margin="0,0,0,2"/>
+                <TextBlock Text="ИНН: 7700000000  КПП: 770001001"
+                           Style="{StaticResource ReceiptMuted}"
+                           TextAlignment="Center"/>
+
+                <TextBlock Text="- - - - - - - - - - - - - - - - - - - - -"
+                           Style="{StaticResource Divider}" TextAlignment="Center" Margin="0,6,0,6"/>
+
+                <!-- ══════ ТИП ДОКУМЕНТА ══════ -->
+                <TextBlock Text="КАССОВЫЙ ЧЕК"
+                           Style="{StaticResource ReceiptBold}"
+                           FontSize="13" TextAlignment="Center" Margin="0,0,0,2"/>
+                <TextBlock x:Name="txtReceiptType"
+                           Text="ПРИХОД" FontSize="11"
+                           Style="{StaticResource ReceiptMuted}"
+                           TextAlignment="Center"/>
+
+                <TextBlock Text="- - - - - - - - - - - - - - - - - - - - -"
+                           Style="{StaticResource Divider}" TextAlignment="Center" Margin="0,6,0,6"/>
+
+                <!-- ══════ РЕКВИЗИТЫ ══════ -->
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="ДАТА:" Style="{StaticResource ReceiptMuted}"/>
+                    <TextBlock x:Name="txtDate" Grid.Column="1" Style="{StaticResource ReceiptText}"/>
+                </Grid>
+                <Grid Margin="0,1,0,1"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="ВРЕМЯ:" Style="{StaticResource ReceiptMuted}"/>
+                    <TextBlock x:Name="txtTime" Grid.Column="1" Style="{StaticResource ReceiptText}"/>
+                </Grid>
+                <Grid Margin="0,1,0,1"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="КАССИР:" Style="{StaticResource ReceiptMuted}"/>
+                    <TextBlock x:Name="txtCashier" Grid.Column="1" Style="{StaticResource ReceiptText}"/>
+                </Grid>
+                <Grid Margin="0,1,0,1"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="СМЕНА №:" Style="{StaticResource ReceiptMuted}"/>
+                    <TextBlock x:Name="txtShift" Grid.Column="1" Style="{StaticResource ReceiptText}"/>
+                </Grid>
+                <Grid Margin="0,1,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="ЧЕК №:" Style="{StaticResource ReceiptMuted}"/>
+                    <TextBlock x:Name="txtReceiptNum" Grid.Column="1" Style="{StaticResource ReceiptText}"/>
+                </Grid>
+
+                <!-- ══════ ШАПКА ТАБЛИЦЫ ТОВАРОВ ══════ -->
+                <TextBlock Text="= = = = = = = = = = = = = = = = = = = ="
+                           Style="{StaticResource Divider}" TextAlignment="Center" Margin="0,8,0,4"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="38"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="58"/>
+                        <ColumnDefinition Width="70"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="НАИМЕНОВАНИЕ" Style="{StaticResource ReceiptMuted}"/>
+                    <TextBlock Text="КОЛ"  Grid.Column="1" Style="{StaticResource ReceiptMuted}" TextAlignment="Right"/>
+                    <TextBlock Text=""     Grid.Column="2" Style="{StaticResource ReceiptMuted}" TextAlignment="Center"/>
+                    <TextBlock Text="ЦЕНА"  Grid.Column="3" Style="{StaticResource ReceiptMuted}" TextAlignment="Right"/>
+                    <TextBlock Text="СУММА" Grid.Column="4" Style="{StaticResource ReceiptMuted}" TextAlignment="Right"/>
+                </Grid>
+                <TextBlock Text="- - - - - - - - - - - - - - - - - - - - -"
+                           Style="{StaticResource Divider}" TextAlignment="Center" Margin="0,2,0,4"/>
+
+                <!-- Список товаров (заполняется в коде) -->
+                <StackPanel x:Name="spItems"/>
+
+                <!-- ══════ ИТОГ ══════ -->
+                <TextBlock Text="= = = = = = = = = = = = = = = = = = = ="
+                           Style="{StaticResource Divider}" TextAlignment="Center" Margin="0,6,0,6"/>
+
+                <!-- Строка «Без скидки» — видна только если есть скидки -->
+                <Grid x:Name="rowOrigTotal" Margin="0,0,0,1" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="БЕЗ СКИДКИ:" Style="{StaticResource ReceiptMuted}"/>
+                    <TextBlock x:Name="txtOrigTotal" Grid.Column="1" Style="{StaticResource ReceiptMuted}"/>
+                </Grid>
+                <!-- Строка «Скидка» — видна только если есть скидки -->
+                <Grid x:Name="rowTotalDiscount" Margin="0,0,0,2" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="СКИДКА:" Style="{StaticResource ReceiptMuted}" Foreground="#B05000"/>
+                    <TextBlock x:Name="txtTotalDiscount" Grid.Column="1" Style="{StaticResource ReceiptMuted}" Foreground="#B05000"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,3">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="ИТОГО:" Style="{StaticResource ReceiptBold}" FontSize="14"/>
+                    <TextBlock x:Name="txtTotal" Grid.Column="1" Style="{StaticResource ReceiptBold}" FontSize="14"/>
+                </Grid>
+                <Grid Margin="0,1,0,1">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock x:Name="lblPayMethod" Text="НАЛИЧНЫЕ:" Style="{StaticResource ReceiptMuted}"/>
+                    <TextBlock x:Name="txtPaid" Grid.Column="1" Style="{StaticResource ReceiptText}"/>
+                </Grid>
+                <Grid x:Name="rowChange" Margin="0,1,0,0">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="СДАЧА:" Style="{StaticResource ReceiptMuted}"/>
+                    <TextBlock x:Name="txtChange" Grid.Column="1" Style="{StaticResource ReceiptText}"/>
+                </Grid>
+
+                <!-- ══════ НАЛОГИ ПО СТАВКАМ (из БД) ══════ -->
+                <TextBlock Text="- - - - - - - - - - - - - - - - - - - - -"
+                           Style="{StaticResource Divider}" TextAlignment="Center" Margin="0,8,0,4"/>
+
+                <!-- Шапка налоговой таблицы -->
+                <Grid Margin="0,0,0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="80"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="НАЛОГ" Style="{StaticResource ReceiptMuted}"/>
+                    <TextBlock Text="ОБОРОТ"  Grid.Column="1" Style="{StaticResource ReceiptMuted}" TextAlignment="Right"/>
+                    <TextBlock Text="СУММА"   Grid.Column="2" Style="{StaticResource ReceiptMuted}" TextAlignment="Right"/>
+                </Grid>
+
+                <!-- Строки налогов (заполняются в коде) -->
+                <StackPanel x:Name="spTaxLines"/>
+
+                <!-- ══════ ФН РЕКВИЗИТЫ ══════ -->
+                <TextBlock Text="- - - - - - - - - - - - - - - - - - - - -"
+                           Style="{StaticResource Divider}" TextAlignment="Center" Margin="0,8,0,4"/>
+                <TextBlock Text="РН ККТ: 0000000000000000"
+                           Style="{StaticResource ReceiptMuted}" TextAlignment="Center"/>
+                <TextBlock x:Name="txtFN" Text="ФН: 9999078900006287"
+                           Style="{StaticResource ReceiptMuted}" TextAlignment="Center"/>
+                <TextBlock x:Name="txtFD" Text="ФД: 000001"
+                           Style="{StaticResource ReceiptMuted}" TextAlignment="Center"/>
+                <TextBlock x:Name="txtFP" Text="ФП: 1234567890"
+                           Style="{StaticResource ReceiptMuted}" TextAlignment="Center"/>
+
+                <!-- ══════ ПОДВАЛ ══════ -->
+                <TextBlock Text="- - - - - - - - - - - - - - - - - - - - -"
+                           Style="{StaticResource Divider}" TextAlignment="Center" Margin="0,6,0,4"/>
+                <TextBlock Text="Проверить чек: kkt.nalog.ru"
+                           Style="{StaticResource ReceiptMuted}" TextAlignment="Center"/>
+                <TextBlock Text="СПАСИБО ЗА ПОКУПКУ!"
+                           Style="{StaticResource ReceiptBold}" FontSize="13"
+                           TextAlignment="Center" Margin="0,8,0,2"/>
+                <TextBlock Text="Ждём вас снова!"
+                           Style="{StaticResource ReceiptMuted}"
+                           TextAlignment="Center" Margin="0,0,0,10"/>
+
+                <!-- Кнопка закрытия -->
+                <Button x:Name="btnClose" Content="Закрыть"
+                        Click="btnClose_Click"
+                        Height="32" Margin="0,6,0,0"
+                        FontFamily="Courier New" FontSize="11"
+                        Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#E0D8CC"/>
+                            <Setter Property="Foreground" Value="#333333"/>
+                            <Setter Property="BorderBrush" Value="#AAAAAA"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#CCC4B4"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</Window>

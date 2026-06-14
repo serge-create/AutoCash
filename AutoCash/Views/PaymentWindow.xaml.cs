@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Security.Cryptography.Xml;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -11,6 +11,9 @@ namespace AutoCash.Views
     {
         private decimal _totalAmount;
         private string _paymentMethod; // "Наличные" или "Карта"
+
+        // Сумма, которую внёс покупатель (читает MainWindow)
+        public decimal AmountReceived { get; private set; }
 
         // Конструктор принимает итоговую сумму и выбранный метод оплаты
         public PaymentWindow(decimal totalAmount, string paymentMethod)
@@ -105,11 +108,16 @@ namespace AutoCash.Views
         // Метод успешного завершения транзакции
         private void FinalizeReceipt()
         {
-            // Здесь будет интеграция с базой данных (создание записи в таблице Receipts)
-            // И фискализация через ККТ (онлайн-кассу) в последующих этапах.
-
-            MessageBox.Show($"Чек успешно оплачен ({_paymentMethod})!\nСмена: успешно обновлена.",
-                            "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            // Сохраняем внесённую сумму
+            if (_paymentMethod == "Наличные" &&
+                decimal.TryParse(txtReceived.Text, out decimal received))
+            {
+                AmountReceived = received;
+            }
+            else
+            {
+                AmountReceived = _totalAmount;
+            }
 
             this.DialogResult = true; // Сигнализируем MainWindow, что продажа закрыта
             this.Close();

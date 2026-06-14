@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -18,6 +19,9 @@ namespace AutoCash.Views
 
         // Текущая сумма чека
         private decimal _currentTotal = 0;
+
+        // Сумма, внесённая покупателем (для сдачи)
+        private decimal _amountPaid = 0;
 
         public MainWindow()
         {
@@ -72,7 +76,7 @@ namespace AutoCash.Views
             }
 
             // Логика сканера штрихкодов (Считывает Enter в конце)
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter || e.Key == Key.Return)
             {
                 if (!string.IsNullOrEmpty(_barcodeBuffer))
                 {
@@ -101,19 +105,17 @@ namespace AutoCash.Views
 
             try
             {
-                using (var db = new AutoCashierDbEntities1()) // Замени на свой Context
+                using (var db = new AutoCashierDbEntities1())
                 {
-                    // Ищем товар в БД
-                    var product = db.Products.FirstOrDefault(p => p.Barcode == barcode);
+                    // Загружаем товар вместе с налоговой ставкой
+                    var product = db.Products
+                        .Include(p => p.Tax_Rates)
+                        .FirstOrDefault(p => p.Barcode == barcode);
 
                     if (product != null)
-                    {
                         AddToCart(product);
-                    }
                     else
-                    {
                         MessageBox.Show($"Товар со штрихкодом {barcode} не найден в базе!", "Не найдено", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
                 }
             }
             catch (Exception ex)
@@ -124,26 +126,31 @@ namespace AutoCash.Views
 
         private void AddToCart(Products product)
         {
-            // Проверяем, есть ли уже этот товар в корзине
-            // Если свойство ID товара в твоей БД называется иначе (например ProductID), замени здесь:
             var existingItem = _cartItems.FirstOrDefault(c => c.ProductID == product.ProductID);
 
             if (existingItem != null)
             {
                 existingItem.Quantity++;
-                existingItem.Total = existingItem.Quantity * existingItem.Price;
-                dgReceipt.Items.Refresh(); // Принудительно обновляем UI таблицу
+                // Используем цену с учётом скидки (если есть)
+                existingItem.Total = existingItem.Quantity * existingItem.DiscountedPrice;
+                dgReceipt.Items.Refresh();
             }
             else
             {
+                decimal discountPct     = product.DiscountPercent ?? 0m;
+                decimal discountedPrice = product.Price * (1m - discountPct / 100m);
+
                 _cartItems.Add(new CartItem
                 {
-                    ProductID = product.ProductID,
-                    ProductName = product.Name,
-                    Quantity = 1,
-                    Price = product.Price,
-                    Discount = 0,
-                    Total = product.Price
+                    ProductID      = product.ProductID,
+                    ProductName    = product.Name,
+                    Quantity       = 1,
+                    Price          = product.Price,          // Оригинальная цена (до скидки)
+                    Discount       = discountPct,            // Скидка в %
+                    DiscountedPrice = discountedPrice,       // Цена после скидки
+                    Total          = discountedPrice,        // 1 шт × цена со скидкой
+                    VatRateName    = product.Tax_Rates?.Name ?? "",
+                    VatRateValue   = product.Tax_Rates?.RateValue ?? 0m
                 });
             }
 
@@ -252,6 +259,8 @@ namespace AutoCash.Views
             // 4. Если кассир успешно пробил чек (нажал Enter в PaymentWindow)
             if (paymentWin.ShowDialog() == true)
             {
+                // Запоминаем сумму оплаты (для наличных — введённую сумму, для карты — точную)
+                _amountPaid = paymentMethod == "Наличные" ? paymentWin.AmountReceived : _currentTotal;
                 SaveReceiptToDatabase(paymentMethod);
             }
         }
@@ -306,11 +315,22 @@ namespace AutoCash.Views
                     }
 
                     db.SaveChanges(); // Сохраняем все позиции и обновленные остатки (Транзакция)
-                }
 
-                // Очищаем интерфейс для следующего покупателя
-                _cartItems.Clear();
-                UpdateTotal();
+                    // --- ПОКАЗЫВАЕМ ЧЕК ---
+                    var itemsSnapshot = new System.Collections.Generic.List<CartItem>(_cartItems);
+                    decimal paidAmount = _amountPaid;
+                    int newReceiptId = newReceipt.ReceiptID;
+                    string pMethod = paymentMethod;
+                    decimal totalSnap = _cartItems.Sum(c => c.Total);
+
+                    // Очищаем до открытия окна, чтобы касса была готова
+                    _cartItems.Clear();
+                    UpdateTotal();
+
+                    var receiptWin = new ReceiptWindow(newReceiptId, itemsSnapshot, totalSnap, pMethod, paidAmount);
+                    receiptWin.Owner = this;
+                    receiptWin.Show();
+                }
             }
             catch (Exception ex)
             {
@@ -333,11 +353,15 @@ namespace AutoCash.Views
     // Вспомогательный класс-модель (ViewModel) для отображения строк в DataGrid
     public class CartItem
     {
-        public int ProductID { get; set; }
-        public string ProductName { get; set; }
-        public decimal Quantity { get; set; }
-        public decimal Price { get; set; }
-        public decimal Discount { get; set; }
-        public decimal Total { get; set; }
+        public int     ProductID      { get; set; }
+        public string  ProductName    { get; set; }
+        public decimal Quantity       { get; set; }
+        public decimal Price          { get; set; }   // цена до скидки
+        public decimal Discount       { get; set; }   // скидка, %
+        public decimal DiscountedPrice { get; set; }  // цена со скидкой
+        public decimal Total          { get; set; }   // итог = Quantity × DiscountedPrice
+        // Налоговая информация (заполняется при добавлении из БД)
+        public string  VatRateName    { get; set; }
+        public decimal VatRateValue   { get; set; }
     }
 }

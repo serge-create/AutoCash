@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,11 +32,13 @@ namespace AutoCash.Views
         {
             try
             {
-                using (var db = new Models.AutoCashierDbEntities1()) // Замени на свой контекст
+                using (var db = new Models.AutoCashierDbEntities1())
                 {
-                    // Загружаем только товары, которые есть в наличии (Остаток > 0). 
-                    // Если хочешь выводить все, убери Where.
-                    _allProducts = db.Products.Where(p => p.StockQuantity > 0).ToList();
+                    // Загружаем товары вместе с налоговой ставкой (нужно для правильного чека)
+                    _allProducts = db.Products
+                        .Include(p => p.Tax_Rates)
+                        .Where(p => p.StockQuantity > 0)
+                        .ToList();
                 }
                 dgProducts.ItemsSource = _allProducts;
             }
