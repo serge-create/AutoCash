@@ -107,7 +107,13 @@ namespace AutoCash.Views
                 MessageBox.Show("Смена не открыта! Перейдите в 'Кассовые смены' и откройте смену.", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+            string searchBarcode = barcode;
 
+            // Если штрихкод в формате EAN-128 (GS1) и начинается с "01", то извлекаем 14-значный код товара
+            if (barcode.Length >= 20 && barcode.StartsWith("01"))
+            {
+                searchBarcode = barcode.Substring(3, 13);
+            }
             try
             {
                 using (var db = new AutoCashierDbEntities1())
