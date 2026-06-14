@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -107,6 +107,11 @@ namespace AutoCash.Views.Management
             dpStart.SelectedDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             dpEnd.SelectedDate = DateTime.Now;
             LoadShiftAnalytics();
+        }
+
+        private void dgShifts_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            AutoCash.Core.WpfUtils.HandleDataGridMouseDown(sender, e);
         }
     }
 

@@ -62,6 +62,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\WpfUtils.cs" />
     <Compile Include="Models\Customers.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

@@ -77,6 +77,11 @@ namespace AutoCash.Views
             ConfirmSelection();
         }
 
+        private void dgProducts_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            AutoCash.Core.WpfUtils.HandleDataGridMouseDown(sender, e);
+        }
+
         // Выбор товара по кнопке
         private void btnSelect_Click(object sender, RoutedEventArgs e)
         {

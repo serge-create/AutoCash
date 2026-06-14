@@ -61,6 +61,11 @@ namespace AutoCash.Views
             }
         }
 
+        private void dgReceipt_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            AutoCash.Core.WpfUtils.HandleDataGridMouseDown(sender, e);
+        }
+
         // ==========================================
         // ЛОГИКА СКАНИРОВАНИЯ И ДОБАВЛЕНИЯ В ЧЕК
         // ==========================================
@@ -274,6 +279,11 @@ namespace AutoCash.Views
                 {
                     // Получаем ID типа оплаты из БД (например: 1 - Наличные, 2 - Карта)
                     var paymentType = db.Payment_Types.Where(x => x.Name == paymentMethod).FirstOrDefault();
+                    if (paymentType == null)
+                    {
+                        MessageBox.Show($"Ошибка: Тип оплаты '{paymentMethod}' не найден в базе данных!", "Ошибка БД", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
                     int paymentTypeId = paymentType.PaymentTypeID;
                     // СОЗДАЕМ ЗАГОЛОВОК ЧЕКА
                     var newReceipt = new Receipts

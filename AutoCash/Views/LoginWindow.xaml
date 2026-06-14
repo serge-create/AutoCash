@@ -1,4 +1,4 @@
-﻿<Window x:Class="AutoCash.Views.LoginWindow"
+<Window x:Class="AutoCash.Views.LoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="AutoCash — Авторизация" Height="400" Width="380"
@@ -16,7 +16,7 @@
                 <TextBlock Text="Автоматизированное рабочее место" FontSize="12" Foreground="#94A3B8" HorizontalAlignment="Center" Margin="0,0,0,25"/>
 
                 <TextBlock Text="ЛИЧНЫЙ ПАРОЛЬ (ПИН-КОД)" FontSize="11" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,5"/>
-                <PasswordBox x:Name="txtPassword" Height="40" Padding="10,8" FontSize="14" Foreground="#1E293B" Margin="0,0,0,10" VerticalContentAlignment="Center">
+                <PasswordBox x:Name="txtPassword" Height="40" Padding="10,8" FontSize="14" Foreground="#1E293B" Margin="0,0,0,10" VerticalContentAlignment="Center" MaxLength="10">
                     <PasswordBox.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="6"/>

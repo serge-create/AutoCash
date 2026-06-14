@@ -1,4 +1,4 @@
-﻿<Window x:Class="AutoCash.Views.Management.AddCategoryWindow"
+<Window x:Class="AutoCash.Views.Management.AddCategoryWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Новая категория" Height="200" Width="360"
@@ -14,7 +14,7 @@
 
         <TextBlock Grid.Row="0" Text="НАЗВАНИЕ НОВОЙ КАТЕГОРИИ" FontSize="11" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,8"/>
 
-        <TextBox x:Name="txtCategoryName" Grid.Row="1" Height="38" Padding="8,6" FontSize="14" Foreground="#1E293B">
+        <TextBox x:Name="txtCategoryName" Grid.Row="1" Height="38" Padding="8,6" FontSize="14" Foreground="#1E293B" MaxLength="100">
             <TextBox.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="6"/>

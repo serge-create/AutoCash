@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
@@ -49,6 +49,11 @@ namespace AutoCash.Views.Management
             }
         }
 
+        private void dgEmployees_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            AutoCash.Core.WpfUtils.HandleDataGridMouseDown(sender, e);
+        }
+
         // Выбор сотрудника в таблице -> заполнение карточки справа
         private void dgEmployees_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -62,16 +67,25 @@ namespace AutoCash.Views.Management
 
                 lblCardTitle.Text = "Редактирование профиля";
             }
+            else
+            {
+                ClearEmployeeForm();
+            }
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
+        {
+            dgEmployees.SelectedItem = null;
+            ClearEmployeeForm();
+        }
+
+        private void ClearEmployeeForm()
         {
             _selectedEmployee = null;
             txtFullName.Clear();
             txtPinCode.Clear();
             cbRoles.SelectedIndex = -1;
             lblCardTitle.Text = "Новый сотрудник";
-            dgEmployees.SelectedItem = null;
         }
 
         // Сохранение (или добавление) сотрудника
@@ -84,6 +98,12 @@ namespace AutoCash.Views.Management
             }
 
             string newPin = txtPinCode.Text.Trim();
+            
+            if (newPin.Any(char.IsWhiteSpace))
+            {
+                MessageBox.Show("ПИН-код не должен содержать пробелов!", "Ошибка валидации", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
             try
             {

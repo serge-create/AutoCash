@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -102,6 +102,11 @@ namespace AutoCash.Views.Management
         }
 
 
+        private void dgProducts_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            AutoCash.Core.WpfUtils.HandleDataGridMouseDown(sender, e);
+        }
+
         // Выбор товара в таблице -> Заполнение карточки справа
         private void dgProducts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -112,15 +117,26 @@ namespace AutoCash.Views.Management
                 txtProductName.Text = product.Name;
                 txtPrice.Text = product.Price.ToString("F2");
                 txtStock.Text = product.StockQuantity.ToString();
+                txtDiscount.Text = product.DiscountPercent.HasValue ? product.DiscountPercent.Value.ToString("F2") : string.Empty;
                 cbCardGroup.SelectedValue = product.GroupID;
                 cbCardUnit.SelectedValue = product.MeasureUnitID;
                 cbVATRate.SelectedValue = product.VATRateID;
 
                 lblCardTitle.Text = "Редактирование товара";
             }
+            else
+            {
+                ClearProductForm();
+            }
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
+        {
+            dgProducts.SelectedItem = null;
+            ClearProductForm();
+        }
+
+        private void ClearProductForm()
         {
             _selectedProduct = null;
             txtBarcode.Clear();
@@ -139,15 +155,29 @@ namespace AutoCash.Views.Management
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             // Базовая валидация полей
-            if (string.IsNullOrWhiteSpace(txtProductName.Text) || !decimal.TryParse(txtPrice.Text, out decimal price) || price <= 0 || cbVATRate.SelectedValue == null)
+            if (string.IsNullOrWhiteSpace(txtProductName.Text) || 
+                !AutoCash.Core.WpfUtils.TryParseDecimal(txtPrice.Text, out decimal price) || 
+                price <= 0 || 
+                cbVATRate.SelectedValue == null)
             {
                 MessageBox.Show("Заполните корректно Наименование, Цену и выберите ставку НДС!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (!decimal.TryParse(txtDiscount.Text, out decimal discount))
+
+            if (!int.TryParse(txtStock.Text, out int stock) || stock < 0)
             {
-                MessageBox.Show("Заполните корректно Скидку!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Заполните корректно Остаток на складе (целое число >= 0)!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
+            }
+            
+            decimal discount = 0;
+            if (!string.IsNullOrWhiteSpace(txtDiscount.Text))
+            {
+                if (!AutoCash.Core.WpfUtils.TryParseDecimal(txtDiscount.Text, out discount))
+                {
+                    MessageBox.Show("Заполните корректно Скидку!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
             }
             try
             {
@@ -163,7 +193,7 @@ namespace AutoCash.Views.Management
                             Barcode = txtBarcode.Text,
                             Name = txtProductName.Text,
                             Price = price,
-                            StockQuantity = int.TryParse(txtStock.Text, out int st) ? st : 0,
+                            StockQuantity = stock,
                             GroupID = (int?)cbCardGroup.SelectedValue,
                             MeasureUnitID = cbCardUnit.SelectedValue != null ? Convert.ToInt32(cbCardUnit.SelectedValue) : 0
                         };
@@ -180,7 +210,7 @@ namespace AutoCash.Views.Management
                             productToUpdate.Barcode = txtBarcode.Text;
                             productToUpdate.Name = txtProductName.Text;
                             productToUpdate.Price = price;
-                            productToUpdate.StockQuantity = int.TryParse(txtStock.Text, out int st) ? st : 0;
+                            productToUpdate.StockQuantity = stock;
                             productToUpdate.GroupID = (int?)cbCardGroup.SelectedValue;
                             productToUpdate.MeasureUnitID = cbCardUnit.SelectedValue != null ? Convert.ToInt32(cbCardUnit.SelectedValue) : 0;
                         }

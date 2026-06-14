@@ -1,4 +1,4 @@
-﻿<Window x:Class="AutoCash.Views.MainWindow"
+<Window x:Class="AutoCash.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Рабочее место кассира (РМК)" Height="768" Width="1024"
@@ -41,7 +41,7 @@
           BorderThickness="0" Background="White" 
           RowBackground="White" AlternatingRowBackground="#F8FAFC" 
           GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0" 
-          RowHeight="45" SelectionMode="Single">
+          RowHeight="45" SelectionMode="Single" MouseDown="dgReceipt_MouseDown">
 
                     <DataGrid.Resources>
                         <Style TargetType="DataGridColumnHeader">

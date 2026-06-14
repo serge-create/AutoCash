@@ -51,7 +51,7 @@ namespace AutoCash.Views
         {
             if (_paymentMethod == "Карта") return;
 
-            if (decimal.TryParse(txtReceived.Text, out decimal received))
+            if (AutoCash.Core.WpfUtils.TryParseDecimal(txtReceived.Text, out decimal received))
             {
                 decimal change = received - _totalAmount;
                 if (change >= 0)
@@ -110,7 +110,7 @@ namespace AutoCash.Views
         {
             // Сохраняем внесённую сумму
             if (_paymentMethod == "Наличные" &&
-                decimal.TryParse(txtReceived.Text, out decimal received))
+                AutoCash.Core.WpfUtils.TryParseDecimal(txtReceived.Text, out decimal received))
             {
                 AmountReceived = received;
             }

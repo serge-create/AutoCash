@@ -1,4 +1,4 @@
-﻿<Window x:Class="AutoCash.Views.ProductSearchWindow"
+<Window x:Class="AutoCash.Views.ProductSearchWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Визуальный поиск товара" Height="500" Width="700"
@@ -27,7 +27,7 @@
             <DataGrid x:Name="dgProducts" AutoGenerateColumns="False" IsReadOnly="True" 
                       HeadersVisibility="Column" FontSize="14" RowHeight="35"
                       Background="White" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0"
-                      MouseDoubleClick="dgProducts_MouseDoubleClick">
+                      MouseDoubleClick="dgProducts_MouseDoubleClick" MouseDown="dgProducts_MouseDown">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Штрихкод" Binding="{Binding Barcode}" Width="120"/>
                     <DataGridTextColumn Header="Наименование товара" Binding="{Binding Name}" Width="*"/>
