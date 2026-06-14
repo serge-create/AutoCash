@@ -203,8 +203,8 @@ namespace AutoCash.Views.Management
         {
             if (_selectedProduct == null) return;
 
-            var res = MessageBox.Show($"Вы уверены, что хотите удалить товар '{_selectedProduct.Name}'?",
-                                      "Подтверждение удаления", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var res = MessageBox.Show($"Вы уверены, что хотите удалить товар '{_selectedProduct.Name}'?\n\nВнимание: Если товар уже продавался, он будет безвозвратно удален из старых чеков!",
+                                      "Подтверждение удаления", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
             if (res == MessageBoxResult.Yes)
             {
@@ -212,20 +212,43 @@ namespace AutoCash.Views.Management
                 {
                     using (var db = new Models.AutoCashierDbEntities1())
                     {
-                        var product = db.Products.Find(_selectedProduct.GroupID);
+                        // 1. Находим товар по его правильному идентификатору (ProductID)
+                        var product = db.Products.Find(_selectedProduct.ProductID);
+
                         if (product != null)
                         {
+                            // 2. Находим все строки чеков, где пробивался этот товар
+                            var relatedReceiptItems = db.Receipt_Items.Where(ri => ri.ProductID == product.ProductID).ToList();
+
+                            if (relatedReceiptItems.Any())
+                            {
+                                foreach (var item in relatedReceiptItems)
+                                {
+                                    // 3. Корректируем итоговую сумму чека, чтобы не сломать финансовую отчетность
+                                    var parentReceipt = db.Receipts.Find(item.ReceiptID);
+                                    if (parentReceipt != null && parentReceipt.TotalAmount.HasValue && item.SubTotal.HasValue)
+                                    {
+                                        parentReceipt.TotalAmount -= item.SubTotal.Value;
+                                    }
+
+                                    // 4. Удаляем позицию из чека
+                                    db.Receipt_Items.Remove(item);
+                                }
+                            }
+
+                            // 5. Теперь СУБД без проблем позволит удалить сам товар
                             db.Products.Remove(product);
                             db.SaveChanges();
                         }
                     }
-                    MessageBox.Show("Товар удален.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                    LoadData();
-                    btnClear_Click(null, null);
+
+                    MessageBox.Show("Товар успешно удален из базы!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    LoadData(); // Обновляем таблицу на экране
+                    btnClear_Click(null, null); // Очищаем поля ввода
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Невозможно удалить товар. Возможно, он уже фигурирует в пробитых чеках.\nДетали: {ex.Message}", "Ошибка удаления", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка БД", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
